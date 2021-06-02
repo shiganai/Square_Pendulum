@@ -163,4 +163,56 @@ public class matrix : MonoBehaviour
                 result[i][j] = matrix[i][j];
         return result;
     }
+
+    public static float[][] MatrixSum(float[][] a, float[][] b)
+    {
+        int row_Num = a.Length;
+        int col_Num = a[0].Length;
+
+        float[][] result = matrix.MatrixCreate(row_Num, col_Num);
+
+        for (int i = 0; i < row_Num; i++)
+        {
+            for (int j = 0; j < col_Num; j++)
+            {
+                result[i][j] = a[i][j] + b[i][j];
+            }
+
+        }
+        return result;
+    }
+    public static float[][] MatrixDiff(float[][] a, float[][] b)
+    {
+        int row_Num = a.Length;
+        int col_Num = a[0].Length;
+
+        float[][] result = matrix.MatrixCreate(row_Num, col_Num);
+
+        for (int i = 0; i < row_Num; i++)
+        {
+            for (int j = 0; j < col_Num; j++)
+            {
+                result[i][j] = a[i][j] - b[i][j];
+            }
+
+        }
+        return result;
+    }
+    public static float[][] MatrixProduct(float[][] a, float b)
+    {
+        int row_Num = a.Length;
+        int col_Num = a[0].Length;
+
+        float[][] result = matrix.MatrixCreate(row_Num, col_Num);
+
+        for (int i = 0; i < row_Num; i++)
+        {
+            for (int j = 0; j < col_Num; j++)
+            {
+                result[i][j] = a[i][j] * b;
+            }
+
+        }
+        return result;
+    }
 }
