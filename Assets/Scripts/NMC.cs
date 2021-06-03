@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Newton_Methods : MonoBehaviour
+public class NMC : MonoBehaviour
 {
 
     public static float[] find_Dds_Body(float alpha_Body, float beta_Body, float dalpha_Body, float depth_Body, float dgamma_Body,
@@ -124,8 +124,9 @@ public class Newton_Methods : MonoBehaviour
         float t10 = Mathf.Pow(t3, 2f);
         float t11 = Mathf.Pow(t4, 2f);
         float t12 = Mathf.Pow(t5, 2f);
-        float ddr_Alpha_Hand = ((-length_Hand * r_F_Z * t2 + (g * length_Hand * m_Hand * t2) / 2.0f + length_Hand * r_F_Y * t3 * t4 - length_Hand * r_F_X * t4 * t5 - (m_Hand * t2 * t4 * t7 * t8) / 4.0f + (m_Hand * t2 * t4 * t6 * t8 * t10) / 4.0f + (m_Hand * t2 * t4 * t7 * t8 * t10) / 4.0f + (m_Hand * t2 * t4 * t6 * t8 * t12) / 4.0f + (m_Hand * t2 * t4 * t7 * t8 * t12) / 4.0f) * -1.2e+1f) / (m_Hand * t8 + m_Hand * t8 * t9 * 3.0f + m_Hand * t8 * t10 * t11 * 3.0f + m_Hand * t8 * t11 * t12 * 3.0f);
-        float ddr_Beta_Hand = ((length_Hand * r_F_X * t2 * t3 + length_Hand * r_F_Y * t2 * t5 - (dr_Beta_Hand * dr_Alpha_Hand * m_Hand * t2 * t4 * t8 * t10) / 2.0f - (dr_Beta_Hand * dr_Alpha_Hand * m_Hand * t2 * t4 * t8 * t12) / 2.0f) * -1.2e+1f) / (m_Hand * t8 * (t9 * t10 * 3.0f + t9 * t12 * 3.0f + 1.0f));
+        float ddr_Alpha_Hand = ((length_Hand * r_F_Z * t2 + (g * length_Hand * m_Hand * t2) / 2.0f - length_Hand * r_F_Y * t3 * t4 + length_Hand * r_F_X * t4 * t5 - (m_Hand * t2 * t4 * t7 * t8) / 4.0f + (m_Hand * t2 * t4 * t6 * t8 * t10) / 4.0f + (m_Hand * t2 * t4 * t7 * t8 * t10) / 4.0f + (m_Hand * t2 * t4 * t6 * t8 * t12) / 4.0f + (m_Hand * t2 * t4 * t7 * t8 * t12) / 4.0f) * -1.2e+1f) / (m_Hand * t8 + m_Hand * t8 * t9 * 3.0f + m_Hand * t8 * t10 * t11 * 3.0f + m_Hand * t8 * t11 * t12 * 3.0f);
+
+        float ddr_Beta_Hand = ((length_Hand * r_F_X * t2 * t3 + length_Hand * r_F_Y * t2 * t5 + (dr_Beta_Hand * dr_Alpha_Hand * m_Hand * t2 * t4 * t8 * t10) / 2.0f + (dr_Beta_Hand * dr_Alpha_Hand * m_Hand * t2 * t4 * t8 * t12) / 2.0f) * 1.2e+1f) / (m_Hand * t8 * (t9 * t10 * 3.0f + t9 * t12 * 3.0f + 1.0f));
 
         return new float[] { ddr_Alpha_Hand, ddr_Beta_Hand };
     }
@@ -143,13 +144,13 @@ public class Newton_Methods : MonoBehaviour
         float t10 = Mathf.Pow(t3, 2f);
         float t11 = Mathf.Pow(t4, 2f);
         float t12 = Mathf.Pow(t5, 2f);
-        float ddl_Alpha_Hand = ((-l_F_Z * length_Hand * t2 + (g * length_Hand * m_Hand * t2) / 2.0f + l_F_Y * length_Hand * t3 * t4 + l_F_X * length_Hand * t4 * t5 - (m_Hand * t2 * t4 * t7 * t8) / 4.0f + (m_Hand * t2 * t4 * t6 * t8 * t10) / 4.0f + (m_Hand * t2 * t4 * t7 * t8 * t10) / 4.0f + (m_Hand * t2 * t4 * t6 * t8 * t12) / 4.0f + (m_Hand * t2 * t4 * t7 * t8 * t12) / 4.0f) * -1.2e+1f) / (m_Hand * t8 + m_Hand * t8 * t9 * 3.0f + m_Hand * t8 * t10 * t11 * 3.0f + m_Hand * t8 * t11 * t12 * 3.0f);
-        float ddl_Beta_Hand = ((l_F_X * length_Hand * t2 * t3 - l_F_Y * length_Hand * t2 * t5 + (dl_Beta_Hand * dl_Alpha_Hand * m_Hand * t2 * t4 * t8 * t10) / 2.0f + (dl_Beta_Hand * dl_Alpha_Hand * m_Hand * t2 * t4 * t8 * t12) / 2.0f) * 1.2e+1f) / (m_Hand * t8 * (t9 * t10 * 3.0f + t9 * t12 * 3.0f + 1.0f));
+        float ddl_Alpha_Hand = ((l_F_Z * length_Hand * t2 + (g * length_Hand * m_Hand * t2) / 2.0f - l_F_Y * length_Hand * t3 * t4 - l_F_X * length_Hand * t4 * t5 - (m_Hand * t2 * t4 * t7 * t8) / 4.0f + (m_Hand * t2 * t4 * t6 * t8 * t10) / 4.0f + (m_Hand * t2 * t4 * t7 * t8 * t10) / 4.0f + (m_Hand * t2 * t4 * t6 * t8 * t12) / 4.0f + (m_Hand * t2 * t4 * t7 * t8 * t12) / 4.0f) * -1.2e+1f) / (m_Hand * t8 + m_Hand * t8 * t9 * 3.0f + m_Hand * t8 * t10 * t11 * 3.0f + m_Hand * t8 * t11 * t12 * 3.0f);
+        float ddl_Beta_Hand = ((-l_F_X * length_Hand * t2 * t3 + l_F_Y * length_Hand * t2 * t5 + (dl_Beta_Hand * dl_Alpha_Hand * m_Hand * t2 * t4 * t8 * t10) / 2.0f + (dl_Beta_Hand * dl_Alpha_Hand * m_Hand * t2 * t4 * t8 * t12) / 2.0f) * 1.2e+1f) / (m_Hand * t8 * (t9 * t10 * 3.0f + t9 * t12 * 3.0f + 1.0f));
 
         return new float[] { ddl_Alpha_Hand, ddl_Beta_Hand };
     }
 
-    public static float[][] find_Coeffs_Ddl_Arm_Bottom(float dl_Beta_Hand, float dl_Alpha_Hand, float g, float l_Alpha_Hand, float l_Beta_Hand, float length_Hand, float m_Hand)
+    public static Matrix find_Coeffs_Ddl_Arm_Bottom(float dl_Beta_Hand, float dl_Alpha_Hand, float g, float l_Alpha_Hand, float l_Beta_Hand, float length_Hand, float m_Hand)
     {
 
         float t2 = Mathf.Cos(l_Alpha_Hand);
@@ -182,27 +183,33 @@ public class Newton_Methods : MonoBehaviour
         float t29 = t12 * t22;
         float t30 = t17 + t19 + 1.0f;
         float t32 = t24 + t25;
-        float t35 = t15 + t18 + t20 + t21;
+        float t34 = t15 + t18 + t20 + t21;
         float t31 = 1.0f / t30;
-        float t36 = 1.0f / t35;
-        float t42 = t16 + t23 + t26 + t27 + t28 + t29;
+        float t35 = 1.0f / t34;
+        float t40 = t16 + t23 + t26 + t27 + t28 + t29;
         float t33 = t3 * t5 * t9 * t14 * t31 * 1.2e+1f;
-        float t37 = t2 * t3 * t4 * t8 * t36 * 1.2e+1f;
-        float t38 = t2 * t4 * t5 * t8 * t36 * 1.2e+1f;
-        float t41 = t3 * t5 * t8 * t11 * t36 * 1.2e+1f;
-        float t34 = -t33;
-        float t39 = -t37;
-        float t40 = -t38;
-        float t43 = t34 + t41;
-        return new float[][] {
-        new float[] {t9 * t10 * t14 * t31 * 1.2e+1f + t8 * t11 * t12 * t36 * 1.2e+1f, t43, t40, t43 },
-        new float[] { t8 * t10 * t11 * t36 * 1.2e+1f + t9 * t12 * t14 * t31 * 1.2e+1f, t39, t40, t39 },
-        new float[] {t8 * t9 * t36 * 1.2e+1f, -length_Hand * t2 * t5 * t6 - length_Hand * t2 * t5 * t7 - dl_Beta_Hand * dl_Alpha_Hand * length_Hand * t3 * t4 * 2.0f + length_Hand * t4 * t5 * t36 * t42 * 1.2e+1f + t2 * t3 * t13 * t14 * t31 * t32 * 1.2e+1f, -length_Hand * t2 * t3 * t6 - length_Hand * t2 * t3 * t7 + dl_Beta_Hand * dl_Alpha_Hand * length_Hand * t4 * t5 * 2.0f + length_Hand * t3 * t4 * t36 * t42 * 1.2e+1f - t2 * t5 * t13 * t14 * t31 * t32 * 1.2e+1f, -length_Hand * t4 * t7 - length_Hand * t2 * t36 * t42 * 1.2e+1f }
-        };
+        float t36 = t2 * t3 * t4 * t8 * t35 * 1.2e+1f;
+        float t37 = t2 * t4 * t5 * t8 * t35 * 1.2e+1f;
+        float t38 = t3 * t5 * t8 * t11 * t35 * 1.2e+1f;
+        float t39 = -t38;
+        float t41 = t33 + t39;
+
+        var result_Tmp = new Matrix(new float[][] {
+            new float[] { t9 * t10 * t14 * t31 * -1.2e+1f - t8 * t11 * t12 * t35 * 1.2e+1f, t41, t37 },
+            new float[] { t41, t8 * t10 * t11 * t35 * -1.2e+1f - t9 * t12 * t14 * t31 * 1.2e+1f, t36 },
+            new float[] { t37, t36, t8 * t9 * t35 * -1.2e+1f },
+            new float[] { -length_Hand * t2 * t5 * t6 - length_Hand * t2 * t5 * t7 - dl_Beta_Hand * dl_Alpha_Hand * length_Hand * t3 * t4 * 2.0f + length_Hand * t4 * t5 * t35 * t40 * 1.2e+1f + t2 * t3 * t13 * t14 * t31 * t32 * 1.2e+1f, -length_Hand * t2 * t3 * t6 - length_Hand * t2 * t3 * t7 + dl_Beta_Hand * dl_Alpha_Hand * length_Hand * t4 * t5 * 2.0f + length_Hand * t3 * t4 * t35 * t40 * 1.2e+1f - t2 * t5 * t13 * t14 * t31 * t32 * 1.2e+1f, -length_Hand * t4 * t7 - length_Hand * t2 * t35 * t40 * 1.2e+1f }
+            });
+        return Matrix.MatrixTranspose(result_Tmp);
+        //return new Matrix(new float[][] {
+        //new float[] {t9 * t10 * t14 * t31 * 1.2e+1f + t8 * t11 * t12 * t36 * 1.2e+1f, t43, t40, t43 },
+        //new float[] { t8 * t10 * t11 * t36 * 1.2e+1f + t9 * t12 * t14 * t31 * 1.2e+1f, t39, t40, t39 },
+        //new float[] {t8 * t9 * t36 * 1.2e+1f, -length_Hand * t2 * t5 * t6 - length_Hand * t2 * t5 * t7 - dl_Beta_Hand * dl_Alpha_Hand * length_Hand * t3 * t4 * 2.0f + length_Hand * t4 * t5 * t36 * t42 * 1.2e+1f + t2 * t3 * t13 * t14 * t31 * t32 * 1.2e+1f, -length_Hand * t2 * t3 * t6 - length_Hand * t2 * t3 * t7 + dl_Beta_Hand * dl_Alpha_Hand * length_Hand * t4 * t5 * 2.0f + length_Hand * t3 * t4 * t36 * t42 * 1.2e+1f - t2 * t5 * t13 * t14 * t31 * t32 * 1.2e+1f, -length_Hand * t4 * t7 - length_Hand * t2 * t36 * t42 * 1.2e+1f }
+        //});
 
     }
 
-    public static float[][] find_Coeffs_Ddl_Shoulder(float alpha_Body, float beta_Body, float dalpha_Body, float dbeta_Body, float depth_Body, float dgamma_Body, float g, float gamma_Body, float height_Body, float m_Body, float width_Body)
+    public static Matrix find_Coeffs_Ddl_Shoulder(float alpha_Body, float beta_Body, float dalpha_Body, float dbeta_Body, float depth_Body, float dgamma_Body, float g, float gamma_Body, float height_Body, float m_Body, float width_Body)
     {
 
         float t2 = Mathf.Cos(alpha_Body);
@@ -373,15 +380,29 @@ public class Newton_Methods : MonoBehaviour
         float t163 = -t162;
         float t168 = t147 + t158 + t159;
         float t169 = t97 + t149 + t157 + t167;
-        return new float[][]
+
+        var result_Tmp = new Matrix(new float[][]
         {
-            new float[] {-t102 - t114 + t122 + (t3 * t7 * t141 * width_Body) / 2.0f, t105 - t109 - (width_Body * (-t103 + t112 + t4 * t27 * t141)) / 2.0f, t106 - t111 - (width_Body * (t107 + t113 + t4 * t29 * t141)) / 2.0f, t105 + t108 + t138 + (t3 * t7 * t142 * width_Body) / 2.0f },
-            new float[] {t118 + t135 + t166 - (width_Body * (t132 - t136 + t28 * t152 + t44 * t152 + t4 * t27 * t142)) / 2.0f, t117 - t134 + t163 - (width_Body * (-t131 - t137 + t23 * t152 + t30 * t152 + t4 * t29 * t142)) / 2.0f, t106 + t110 - t133 + (t3 * t7 * t143 * width_Body) / 2.0f, t117 + t127 + t163 + (width_Body * (t125 - t129 + t28 * (t89 - t120) + t44 * (t89 - t120) - t4 * t27 * t143)) / 2.0f },
-            new float[] {t115 - t126 + t165 - (width_Body * (t124 + t130 - t23 * (t89 - t120) - t30 * (t89 - t120) + t4 * t29 * t143)) / 2.0f, t102 + t114 + t122 + (t3 * t7 * t140 * width_Body) / 2.0f, t105 + t109 - (width_Body * (t103 - t112 + t4 * t27 * t140)) / 2.0f, t106 + t111 + (width_Body * (t107 + t113 - t4 * t29 * t140)) / 2.0f, t105 - t108 - t138 + (t3 * t7 * t144 * width_Body) / 2.0f, -t135 + t166 - (width_Body * (-t132 + t136 + t28 * (t90 - t123) + t44 * (t90 - t123) + t4 * t27 * t144)) / 2.0f - height_Body * t3 * t4 * t7 * t17 * t22 * t50 * width_Body * 3.0f, t119 + t134 + t163 - (width_Body * (t131 + t137 + t23 * (t90 - t123) + t30 * (t90 - t123) + t4 * t29 * t144)) / 2.0f, t106 - t110 + t133 + (t3 * t7 * t145 * width_Body) / 2.0f, t119 - t127 + t163 + (width_Body * (-t125 + t129 + t28 * t150 + t44 * t150 - t4 * t27 * t145)) / 2.0f, t126 + t165 + (width_Body * (t124 + t130 + t23 * t150 + t30 * t150 - t4 * t29 * t145)) / 2.0f - height_Body * t3 * t4 * t7 * t19 * t22 * t50 * width_Body * 3.0f, t106 * t139 + (t3 * t4 * t10 * width_Body) / 2.0f + (t3 * t4 * t12 * width_Body) / 2.0f - (t3 * t7 * t169 * width_Body) / 2.0f - dbeta_Body * dgamma_Body * t6 * t7 * width_Body - (height_Body * t7 * t12 * t50 * t77) / 2.0f - height_Body * t4 * t22 * t50 * t164 * 6.0f + t2 * t4 * t7 * t13 * t50 * t121 * (3.0f / 4.0f), (width_Body * (t9 * t23 + t10 * t23 + t9 * t30 + t10 * t30 + t12 * t30 - t28 * t168 + t32 * t168 - dalpha_Body * dbeta_Body * t27 * 2.0f - dalpha_Body * dbeta_Body * t33 * 2.0f + t4 * t27 * t169 + dalpha_Body * dgamma_Body * t4 * t29 * 2.0f + dbeta_Body * dgamma_Body * t4 * t28 * 2.0f)) / 2.0f + t90 * t146 + t116 * t128 * t161 - t22 * t116 * t139 * t154 * 3.0f - height_Body * t2 * t7 * t22 * t50 * t164 * 6.0f - t2 * t4 * t12 * t14 * t21 * t50 * (3.0f / 2.0f), width_Body * (t9 * t28 + t10 * t28 + t9 * t44 + t10 * t44 + t12 * t44 + t23 * t168 + t30 * t168 + dalpha_Body * dbeta_Body * t29 * 2.0f - dalpha_Body * dbeta_Body * t31 * 2.0f - t4 * t29 * t169 + dalpha_Body * dgamma_Body * t4 * t27 * 2.0f - dbeta_Body * dgamma_Body * t4 * t23 * 2.0f) * (-1.0f / 2.0f) + t139 * t165 - t116 * t128 * t154 * 3.0f - height_Body * t2 * t4 * t22 * t49 * t146 * 6.0f - height_Body * t5 * t7 * t22 * t50 * t164 * 6.0f - t4 * t5 * t12 * t14 * t21 * t50 * (3.0f / 2.0f) }
-        };
+            new float[]{ -t102 - t114 + t122 + (t3 * t7 * t141 * width_Body) / 2.0f, t105 - t109 - (width_Body * (-t103 + t112 + t4 * t27 * t141)) / 2.0f, t106 - t111 - (width_Body * (t107 + t113 + t4 * t29 * t141)) / 2.0f },
+            new float[]{ t105 + t108 + t138 + (t3 * t7 * t142 * width_Body) / 2.0f, t118 + t135 + t166 - (width_Body * (t132 - t136 + t28 * t152 + t44 * t152 + t4 * t27 * t142)) / 2.0f, t117 - t134 + t163 - (width_Body * (-t131 - t137 + t23 * t152 + t30 * t152 + t4 * t29 * t142)) / 2.0f },
+            new float[]{ t106 + t110 - t133 + (t3 * t7 * t143 * width_Body) / 2.0f, t117 + t127 + t163 + (width_Body * (t125 - t129 + t28 * (t89 - t120) + t44 * (t89 - t120) - t4 * t27 * t143)) / 2.0f, t115 - t126 + t165 - (width_Body * (t124 + t130 - t23 * (t89 - t120) - t30 * (t89 - t120) + t4 * t29 * t143)) / 2.0f },
+            new float[]{ t102 + t114 + t122 + (t3 * t7 * t140 * width_Body) / 2.0f, t105 + t109 - (width_Body * (t103 - t112 + t4 * t27 * t140)) / 2.0f, t106 + t111 + (width_Body * (t107 + t113 - t4 * t29 * t140)) / 2.0f },
+            new float[]{ t105 - t108 - t138 + (t3 * t7 * t144 * width_Body) / 2.0f, -t135 + t166 - (width_Body * (-t132 + t136 + t28 * (t90 - t123) + t44 * (t90 - t123) + t4 * t27 * t144)) / 2.0f - height_Body * t3 * t4 * t7 * t17 * t22 * t50 * width_Body * 3.0f, t119 + t134 + t163 - (width_Body * (t131 + t137 + t23 * (t90 - t123) + t30 * (t90 - t123) + t4 * t29 * t144)) / 2.0f },
+            new float[]{ t106 - t110 + t133 + (t3 * t7 * t145 * width_Body) / 2.0f, t119 - t127 + t163 + (width_Body * (-t125 + t129 + t28 * t150 + t44 * t150 - t4 * t27 * t145)) / 2.0f, t126 + t165 + (width_Body * (t124 + t130 + t23 * t150 + t30 * t150 - t4 * t29 * t145)) / 2.0f - height_Body * t3 * t4 * t7 * t19 * t22 * t50 * width_Body * 3.0f },
+            new float[]{ t106 * t139 + (t3 * t4 * t10 * width_Body) / 2.0f + (t3 * t4 * t12 * width_Body) / 2.0f - (t3 * t7 * t169 * width_Body) / 2.0f - dbeta_Body * dgamma_Body * t6 * t7 * width_Body - (height_Body * t7 * t12 * t50 * t77) / 2.0f - height_Body * t4 * t22 * t50 * t164 * 6.0f + t2 * t4 * t7 * t13 * t50 * t121 * (3.0f / 4.0f), (width_Body * (t9 * t23 + t10 * t23 + t9 * t30 + t10 * t30 + t12 * t30 - t28 * t168 + t32 * t168 - dalpha_Body * dbeta_Body * t27 * 2.0f - dalpha_Body * dbeta_Body * t33 * 2.0f + t4 * t27 * t169 + dalpha_Body * dgamma_Body * t4 * t29 * 2.0f + dbeta_Body * dgamma_Body * t4 * t28 * 2.0f)) / 2.0f + t90 * t146 + t116 * t128 * t161 - t22 * t116 * t139 * t154 * 3.0f - height_Body * t2 * t7 * t22 * t50 * t164 * 6.0f - t2 * t4 * t12 * t14 * t21 * t50 * (3.0f / 2.0f), width_Body * (t9 * t28 + t10 * t28 + t9 * t44 + t10 * t44 + t12 * t44 + t23 * t168 + t30 * t168 + dalpha_Body * dbeta_Body * t29 * 2.0f - dalpha_Body * dbeta_Body * t31 * 2.0f - t4 * t29 * t169 + dalpha_Body * dgamma_Body * t4 * t27 * 2.0f - dbeta_Body * dgamma_Body * t4 * t23 * 2.0f) * (-1.0f / 2.0f) + t139 * t165 - t116 * t128 * t154 * 3.0f - height_Body * t2 * t4 * t22 * t49 * t146 * 6.0f - height_Body * t5 * t7 * t22 * t50 * t164 * 6.0f - t4 * t5 * t12 * t14 * t21 * t50 * (3.0f / 2.0f) }
+        });
+
+        return Matrix.MatrixTranspose(result_Tmp);
+
+        //return new Matrix(new float[][]
+        //{
+        //    new float[] {-t102 - t114 + t122 + (t3 * t7 * t141 * width_Body) / 2.0f, t105 - t109 - (width_Body * (-t103 + t112 + t4 * t27 * t141)) / 2.0f, t106 - t111 - (width_Body * (t107 + t113 + t4 * t29 * t141)) / 2.0f, t105 + t108 + t138 + (t3 * t7 * t142 * width_Body) / 2.0f },
+        //    new float[] {t118 + t135 + t166 - (width_Body * (t132 - t136 + t28 * t152 + t44 * t152 + t4 * t27 * t142)) / 2.0f, t117 - t134 + t163 - (width_Body * (-t131 - t137 + t23 * t152 + t30 * t152 + t4 * t29 * t142)) / 2.0f, t106 + t110 - t133 + (t3 * t7 * t143 * width_Body) / 2.0f, t117 + t127 + t163 + (width_Body * (t125 - t129 + t28 * (t89 - t120) + t44 * (t89 - t120) - t4 * t27 * t143)) / 2.0f },
+        //    new float[] {t115 - t126 + t165 - (width_Body * (t124 + t130 - t23 * (t89 - t120) - t30 * (t89 - t120) + t4 * t29 * t143)) / 2.0f, t102 + t114 + t122 + (t3 * t7 * t140 * width_Body) / 2.0f, t105 + t109 - (width_Body * (t103 - t112 + t4 * t27 * t140)) / 2.0f, t106 + t111 + (width_Body * (t107 + t113 - t4 * t29 * t140)) / 2.0f, t105 - t108 - t138 + (t3 * t7 * t144 * width_Body) / 2.0f, -t135 + t166 - (width_Body * (-t132 + t136 + t28 * (t90 - t123) + t44 * (t90 - t123) + t4 * t27 * t144)) / 2.0f - height_Body * t3 * t4 * t7 * t17 * t22 * t50 * width_Body * 3.0f, t119 + t134 + t163 - (width_Body * (t131 + t137 + t23 * (t90 - t123) + t30 * (t90 - t123) + t4 * t29 * t144)) / 2.0f, t106 - t110 + t133 + (t3 * t7 * t145 * width_Body) / 2.0f, t119 - t127 + t163 + (width_Body * (-t125 + t129 + t28 * t150 + t44 * t150 - t4 * t27 * t145)) / 2.0f, t126 + t165 + (width_Body * (t124 + t130 + t23 * t150 + t30 * t150 - t4 * t29 * t145)) / 2.0f - height_Body * t3 * t4 * t7 * t19 * t22 * t50 * width_Body * 3.0f, t106 * t139 + (t3 * t4 * t10 * width_Body) / 2.0f + (t3 * t4 * t12 * width_Body) / 2.0f - (t3 * t7 * t169 * width_Body) / 2.0f - dbeta_Body * dgamma_Body * t6 * t7 * width_Body - (height_Body * t7 * t12 * t50 * t77) / 2.0f - height_Body * t4 * t22 * t50 * t164 * 6.0f + t2 * t4 * t7 * t13 * t50 * t121 * (3.0f / 4.0f), (width_Body * (t9 * t23 + t10 * t23 + t9 * t30 + t10 * t30 + t12 * t30 - t28 * t168 + t32 * t168 - dalpha_Body * dbeta_Body * t27 * 2.0f - dalpha_Body * dbeta_Body * t33 * 2.0f + t4 * t27 * t169 + dalpha_Body * dgamma_Body * t4 * t29 * 2.0f + dbeta_Body * dgamma_Body * t4 * t28 * 2.0f)) / 2.0f + t90 * t146 + t116 * t128 * t161 - t22 * t116 * t139 * t154 * 3.0f - height_Body * t2 * t7 * t22 * t50 * t164 * 6.0f - t2 * t4 * t12 * t14 * t21 * t50 * (3.0f / 2.0f), width_Body * (t9 * t28 + t10 * t28 + t9 * t44 + t10 * t44 + t12 * t44 + t23 * t168 + t30 * t168 + dalpha_Body * dbeta_Body * t29 * 2.0f - dalpha_Body * dbeta_Body * t31 * 2.0f - t4 * t29 * t169 + dalpha_Body * dgamma_Body * t4 * t27 * 2.0f - dbeta_Body * dgamma_Body * t4 * t23 * 2.0f) * (-1.0f / 2.0f) + t139 * t165 - t116 * t128 * t154 * 3.0f - height_Body * t2 * t4 * t22 * t49 * t146 * 6.0f - height_Body * t5 * t7 * t22 * t50 * t164 * 6.0f - t4 * t5 * t12 * t14 * t21 * t50 * (3.0f / 2.0f) }
+        //});
     }
 
-    public static float[][] find_Coeffs_Ddr_Arm_Bottom(float dr_Beta_Hand, float dr_Alpha_Hand, float g, float length_Hand, float m_Hand, float r_Alpha_Hand, float r_Beta_Hand)
+    public static Matrix find_Coeffs_Ddr_Arm_Bottom(float dr_Beta_Hand, float dr_Alpha_Hand, float g, float length_Hand, float m_Hand, float r_Alpha_Hand, float r_Beta_Hand)
     {
 
         float t2 = Mathf.Cos(r_Alpha_Hand);
@@ -414,25 +435,35 @@ public class Newton_Methods : MonoBehaviour
         float t29 = t12 * t22;
         float t30 = t17 + t19 + 1.0f;
         float t32 = t24 + t25;
-        float t34 = t15 + t18 + t20 + t21;
+        float t35 = t15 + t18 + t20 + t21;
         float t31 = 1.0f / t30;
-        float t35 = 1.0f / t34;
+        float t36 = 1.0f / t35;
         float t41 = t16 + t23 + t26 + t27 + t28 + t29;
         float t33 = t3 * t5 * t9 * t14 * t31 * 1.2e+1f;
-        float t36 = t2 * t3 * t4 * t8 * t35 * 1.2e+1f;
-        float t37 = t2 * t4 * t5 * t8 * t35 * 1.2e+1f;
-        float t39 = t3 * t5 * t8 * t11 * t35 * 1.2e+1f;
-        float t38 = -t36;
-        float t40 = -t39;
-        float t42 = t33 + t40;
-        return new float[][] {
-            new float[] { t9 * t10 * t14 * t31 * 1.2e+1f + t8 * t11 * t12 * t35 * 1.2e+1f, t42, t37, t42 },
-            new float[] { t8 * t10 * t11 * t35 * 1.2e+1f + t9 * t12 * t14 * t31 * 1.2e+1f, t38, t37, t38 },
-            new float[] { t8 * t9 * t35 * 1.2e+1f, length_Hand * t2 * t5 * t6 + length_Hand * t2 * t5 * t7 + dr_Beta_Hand * dr_Alpha_Hand * length_Hand * t3 * t4 * 2.0f - length_Hand * t4 * t5 * t35 * t41 * 1.2e+1f - t2 * t3 * t13 * t14 * t31 * t32 * 1.2e+1f, -length_Hand * t2 * t3 * t6 - length_Hand * t2 * t3 * t7 + dr_Beta_Hand * dr_Alpha_Hand * length_Hand * t4 * t5 * 2.0f + length_Hand * t3 * t4 * t35 * t41 * 1.2e+1f - t2 * t5 * t13 * t14 * t31 * t32 * 1.2e+1f, -length_Hand * t4 * t7 - length_Hand * t2 * t35 * t41 * 1.2e+1f }
-        };
+        float t37 = t2 * t3 * t4 * t8 * t36 * 1.2e+1f;
+        float t38 = t2 * t4 * t5 * t8 * t36 * 1.2e+1f;
+        float t40 = t3 * t5 * t8 * t11 * t36 * 1.2e+1f;
+        float t34 = -t33;
+        float t39 = -t38;
+        float t42 = t34 + t40;
+        var result_Tmp = new Matrix(new float[][]
+        {
+            new float[]{ t9 * t10 * t14 * t31 * -1.2e+1f - t8 * t11 * t12 * t36 * 1.2e+1f, t42, t39 },
+            new float[] {t42, t8 * t10 * t11 * t36 * -1.2e+1f - t9 * t12 * t14 * t31 * 1.2e+1f, t37 },
+            new float[] {t39, t37, t8 * t9 * t36 * -1.2e+1f },
+            new float[] {length_Hand * t2 * t5 * t6 + length_Hand * t2 * t5 * t7 + dr_Beta_Hand * dr_Alpha_Hand * length_Hand * t3 * t4 * 2.0f - length_Hand * t4 * t5 * t36 * t41 * 1.2e+1f - t2 * t3 * t13 * t14 * t31 * t32 * 1.2e+1f ,-length_Hand * t2 * t3 * t6 - length_Hand * t2 * t3 * t7 + dr_Beta_Hand * dr_Alpha_Hand * length_Hand * t4 * t5 * 2.0f + length_Hand * t3 * t4 * t36 * t41 * 1.2e+1f - t2 * t5 * t13 * t14 * t31 * t32 * 1.2e+1f, -length_Hand * t4 * t7 - length_Hand * t2 * t36 * t41 * 1.2e+1f }
+        });
+
+
+        return Matrix.MatrixTranspose(result_Tmp);
+        //return new Matrix(new float[][] {
+        //    new float[] { t9 * t10 * t14 * t31 * 1.2e+1f + t8 * t11 * t12 * t35 * 1.2e+1f, t42, t37, t42 },
+        //    new float[] { t8 * t10 * t11 * t35 * 1.2e+1f + t9 * t12 * t14 * t31 * 1.2e+1f, t38, t37, t38 },
+        //    new float[] { t8 * t9 * t35 * 1.2e+1f, length_Hand * t2 * t5 * t6 + length_Hand * t2 * t5 * t7 + dr_Beta_Hand * dr_Alpha_Hand * length_Hand * t3 * t4 * 2.0f - length_Hand * t4 * t5 * t35 * t41 * 1.2e+1f - t2 * t3 * t13 * t14 * t31 * t32 * 1.2e+1f, -length_Hand * t2 * t3 * t6 - length_Hand * t2 * t3 * t7 + dr_Beta_Hand * dr_Alpha_Hand * length_Hand * t4 * t5 * 2.0f + length_Hand * t3 * t4 * t35 * t41 * 1.2e+1f - t2 * t5 * t13 * t14 * t31 * t32 * 1.2e+1f, -length_Hand * t4 * t7 - length_Hand * t2 * t35 * t41 * 1.2e+1f }
+        //});
     }
 
-    public static float[][] find_Coeffs_Ddr_Shoulder(float alpha_Body, float beta_Body, float dalpha_Body, float dbeta_Body, float depth_Body, float dgamma_Body, float g, float gamma_Body, float height_Body, float m_Body, float width_Body)
+    public static Matrix find_Coeffs_Ddr_Shoulder(float alpha_Body, float beta_Body, float dalpha_Body, float dbeta_Body, float depth_Body, float dgamma_Body, float g, float gamma_Body, float height_Body, float m_Body, float width_Body)
     {
 
         float t2 = Mathf.Cos(alpha_Body);
@@ -603,25 +634,40 @@ public class Newton_Methods : MonoBehaviour
         float t163 = -t162;
         float t168 = t147 + t158 + t159;
         float t169 = t97 + t149 + t157 + t167;
-        return new float[][] {
-            new float[] {-t102 + t114 + t122 - (t3 * t7 * t141 * width_Body) / 2.0f, t105 - t109 + (width_Body * (-t103 + t112 + t4 * t27 * t141)) / 2.0f, t106 - t111 + (width_Body * (t107 + t113 + t4 * t29 * t141)) / 2.0f, t105 + t108 - t138 - (t3 * t7 * t142 * width_Body) / 2.0f },
-            new float[] {t118 + t135 + t166 + (width_Body * (t132 - t136 + t28 * t152 + t44 * t152 + t4 * t27 * t142)) / 2.0f, t117 - t134 + t163 + (width_Body * (-t131 - t137 + t23 * t152 + t30 * t152 + t4 * t29 * t142)) / 2.0f, t106 + t110 + t133 - (t3 * t7 * t143 * width_Body) / 2.0f, t117 + t127 + t163 - (width_Body * (t125 - t129 + t28 * (t89 - t120) + t44 * (t89 - t120) - t4 * t27 * t143)) / 2.0f },
-            new float[] {t115 - t126 + t165 + (width_Body * (t124 + t130 - t23 * (t89 - t120) - t30 * (t89 - t120) + t4 * t29 * t143)) / 2.0f, t102 - t114 + t122 - (t3 * t7 * t140 * width_Body) / 2.0f, t105 + t109 + (width_Body * (t103 - t112 + t4 * t27 * t140)) / 2.0f, t106 + t111 - (width_Body * (t107 + t113 - t4 * t29 * t140)) / 2.0f, t105 - t108 + t138 - (t3 * t7 * t144 * width_Body) / 2.0f, -t135 + t166 + (width_Body * (-t132 + t136 + t28 * (t90 - t123) + t44 * (t90 - t123) + t4 * t27 * t144)) / 2.0f - height_Body * t3 * t4 * t7 * t17 * t22 * t50 * width_Body * 3.0f, t119 + t134 + t163 + (width_Body * (t131 + t137 + t23 * (t90 - t123) + t30 * (t90 - t123) + t4 * t29 * t144)) / 2.0f, t106 - t110 - t133 - (t3 * t7 * t145 * width_Body) / 2.0f, t119 - t127 + t163 - (width_Body * (-t125 + t129 + t28 * t150 + t44 * t150 - t4 * t27 * t145)) / 2.0f, t126 + t165 - (width_Body * (t124 + t130 + t23 * t150 + t30 * t150 - t4 * t29 * t145)) / 2.0f - height_Body * t3 * t4 * t7 * t19 * t22 * t50 * width_Body * 3.0f, t106* t139 -(t3 * t4 * t10 * width_Body) / 2.0f - (t3 * t4 * t12 * width_Body) / 2.0f + (t3 * t7 * t169 * width_Body) / 2.0f + dbeta_Body * dgamma_Body * t6 * t7 * width_Body - (height_Body * t7 * t12 * t50 * t77) / 2.0f - height_Body * t4 * t22 * t50 * t164 * 6.0f + t2 * t4 * t7 * t13 * t50 * t121 * (3.0f / 4.0f), width_Body * (t9 * t23 + t10 * t23 + t9 * t30 + t10 * t30 + t12 * t30 - t28 * t168 + t32 * t168 - dalpha_Body * dbeta_Body * t27 * 2.0f - dalpha_Body * dbeta_Body * t33 * 2.0f + t4 * t27 * t169 + dalpha_Body * dgamma_Body * t4 * t29 * 2.0f + dbeta_Body * dgamma_Body * t4 * t28 * 2.0f) * (-1.0f / 2.0f) + t90 * t146 + t116 * t128 * t161 - t22 * t116 * t139 * t154 * 3.0f - height_Body * t2 * t7 * t22 * t50 * t164 * 6.0f - t2 * t4 * t12 * t14 * t21 * t50 * (3.0f / 2.0f), (width_Body * (t9 * t28 + t10 * t28 + t9 * t44 + t10 * t44 + t12 * t44 + t23 * t168 + t30 * t168 + dalpha_Body * dbeta_Body * t29 * 2.0f - dalpha_Body * dbeta_Body * t31 * 2.0f - t4 * t29 * t169 + dalpha_Body * dgamma_Body * t4 * t27 * 2.0f - dbeta_Body * dgamma_Body * t4 * t23 * 2.0f)) / 2.0f + t139 * t165 - t116 * t128 * t154 * 3.0f - height_Body * t2 * t4 * t22 * t49 * t146 * 6.0f - height_Body * t5 * t7 * t22 * t50 * t164 * 6.0f - t4 * t5 * t12 * t14 * t21 * t50 * (3.0f / 2.0f) }
-            };
+
+
+        var result_Tmp = new Matrix(new float[][]
+        {
+            new float[]{ -t102 + t114 + t122 - (t3 * t7 * t141 * width_Body) / 2.0f, t105 - t109 + (width_Body * (-t103 + t112 + t4 * t27 * t141)) / 2.0f, t106 - t111 + (width_Body * (t107 + t113 + t4 * t29 * t141)) / 2.0f },
+            new float[]{ t105 + t108 - t138 - (t3 * t7 * t142 * width_Body) / 2.0f, t118 + t135 + t166 + (width_Body * (t132 - t136 + t28 * t152 + t44 * t152 + t4 * t27 * t142)) / 2.0f, t117 - t134 + t163 + (width_Body * (-t131 - t137 + t23 * t152 + t30 * t152 + t4 * t29 * t142)) / 2.0f },
+            new float[]{ t106 + t110 + t133 - (t3 * t7 * t143 * width_Body) / 2.0f, t117 + t127 + t163 - (width_Body * (t125 - t129 + t28 * (t89 - t120) + t44 * (t89 - t120) - t4 * t27 * t143)) / 2.0f, t115 - t126 + t165 + (width_Body * (t124 + t130 - t23 * (t89 - t120) - t30 * (t89 - t120) + t4 * t29 * t143)) / 2.0f },
+            new float[]{ t102 - t114 + t122 - (t3 * t7 * t140 * width_Body) / 2.0f, t105 + t109 + (width_Body * (t103 - t112 + t4 * t27 * t140)) / 2.0f, t106 + t111 - (width_Body * (t107 + t113 - t4 * t29 * t140)) / 2.0f },
+            new float[]{ t105 - t108 + t138 - (t3 * t7 * t144 * width_Body) / 2.0f, -t135 + t166 + (width_Body * (-t132 + t136 + t28 * (t90 - t123) + t44 * (t90 - t123) + t4 * t27 * t144)) / 2.0f - height_Body * t3 * t4 * t7 * t17 * t22 * t50 * width_Body * 3.0f, t119 + t134 + t163 + (width_Body * (t131 + t137 + t23 * (t90 - t123) + t30 * (t90 - t123) + t4 * t29 * t144)) / 2.0f },
+            new float[]{ t106 - t110 - t133 - (t3 * t7 * t145 * width_Body) / 2.0f, t119 - t127 + t163 - (width_Body * (-t125 + t129 + t28 * t150 + t44 * t150 - t4 * t27 * t145)) / 2.0f, t126 + t165 - (width_Body * (t124 + t130 + t23 * t150 + t30 * t150 - t4 * t29 * t145)) / 2.0f - height_Body * t3 * t4 * t7 * t19 * t22 * t50 * width_Body * 3.0f },
+            new float[]{ t106 * t139 - (t3 * t4 * t10 * width_Body) / 2.0f - (t3 * t4 * t12 * width_Body) / 2.0f + (t3 * t7 * t169 * width_Body) / 2.0f + dbeta_Body * dgamma_Body * t6 * t7 * width_Body - (height_Body * t7 * t12 * t50 * t77) / 2.0f - height_Body * t4 * t22 * t50 * t164 * 6.0f + t2 * t4 * t7 * t13 * t50 * t121 * (3.0f / 4.0f), width_Body * (t9 * t23 + t10 * t23 + t9 * t30 + t10 * t30 + t12 * t30 - t28 * t168 + t32 * t168 - dalpha_Body * dbeta_Body * t27 * 2.0f - dalpha_Body * dbeta_Body * t33 * 2.0f + t4 * t27 * t169 + dalpha_Body * dgamma_Body * t4 * t29 * 2.0f + dbeta_Body * dgamma_Body * t4 * t28 * 2.0f) * (-1.0f / 2.0f) + t90 * t146 + t116 * t128 * t161 - t22 * t116 * t139 * t154 * 3.0f - height_Body * t2 * t7 * t22 * t50 * t164 * 6.0f - t2 * t4 * t12 * t14 * t21 * t50 * (3.0f / 2.0f), (width_Body * (t9 * t28 + t10 * t28 + t9 * t44 + t10 * t44 + t12 * t44 + t23 * t168 + t30 * t168 + dalpha_Body * dbeta_Body * t29 * 2.0f - dalpha_Body * dbeta_Body * t31 * 2.0f - t4 * t29 * t169 + dalpha_Body * dgamma_Body * t4 * t27 * 2.0f - dbeta_Body * dgamma_Body * t4 * t23 * 2.0f)) / 2.0f + t139 * t165 - t116 * t128 * t154 * 3.0f - height_Body * t2 * t4 * t22 * t49 * t146 * 6.0f - height_Body * t5 * t7 * t22 * t50 * t164 * 6.0f - t4 * t5 * t12 * t14 * t21 * t50 * (3.0f / 2.0f)}
+        });
+
+
+        return Matrix.MatrixTranspose(result_Tmp);
+        //return new Matrix(new float[][] {
+        //    new float[] {-t102 + t114 + t122 - (t3 * t7 * t141 * width_Body) / 2.0f, t105 - t109 + (width_Body * (-t103 + t112 + t4 * t27 * t141)) / 2.0f, t106 - t111 + (width_Body * (t107 + t113 + t4 * t29 * t141)) / 2.0f, t105 + t108 - t138 - (t3 * t7 * t142 * width_Body) / 2.0f },
+        //    new float[] {t118 + t135 + t166 + (width_Body * (t132 - t136 + t28 * t152 + t44 * t152 + t4 * t27 * t142)) / 2.0f, t117 - t134 + t163 + (width_Body * (-t131 - t137 + t23 * t152 + t30 * t152 + t4 * t29 * t142)) / 2.0f, t106 + t110 + t133 - (t3 * t7 * t143 * width_Body) / 2.0f, t117 + t127 + t163 - (width_Body * (t125 - t129 + t28 * (t89 - t120) + t44 * (t89 - t120) - t4 * t27 * t143)) / 2.0f },
+        //    new float[] {t115 - t126 + t165 + (width_Body * (t124 + t130 - t23 * (t89 - t120) - t30 * (t89 - t120) + t4 * t29 * t143)) / 2.0f, t102 - t114 + t122 - (t3 * t7 * t140 * width_Body) / 2.0f, t105 + t109 + (width_Body * (t103 - t112 + t4 * t27 * t140)) / 2.0f, t106 + t111 - (width_Body * (t107 + t113 - t4 * t29 * t140)) / 2.0f, t105 - t108 + t138 - (t3 * t7 * t144 * width_Body) / 2.0f, -t135 + t166 + (width_Body * (-t132 + t136 + t28 * (t90 - t123) + t44 * (t90 - t123) + t4 * t27 * t144)) / 2.0f - height_Body * t3 * t4 * t7 * t17 * t22 * t50 * width_Body * 3.0f, t119 + t134 + t163 + (width_Body * (t131 + t137 + t23 * (t90 - t123) + t30 * (t90 - t123) + t4 * t29 * t144)) / 2.0f, t106 - t110 - t133 - (t3 * t7 * t145 * width_Body) / 2.0f, t119 - t127 + t163 - (width_Body * (-t125 + t129 + t28 * t150 + t44 * t150 - t4 * t27 * t145)) / 2.0f, t126 + t165 - (width_Body * (t124 + t130 + t23 * t150 + t30 * t150 - t4 * t29 * t145)) / 2.0f - height_Body * t3 * t4 * t7 * t19 * t22 * t50 * width_Body * 3.0f, t106* t139 -(t3 * t4 * t10 * width_Body) / 2.0f - (t3 * t4 * t12 * width_Body) / 2.0f + (t3 * t7 * t169 * width_Body) / 2.0f + dbeta_Body * dgamma_Body * t6 * t7 * width_Body - (height_Body * t7 * t12 * t50 * t77) / 2.0f - height_Body * t4 * t22 * t50 * t164 * 6.0f + t2 * t4 * t7 * t13 * t50 * t121 * (3.0f / 4.0f), width_Body * (t9 * t23 + t10 * t23 + t9 * t30 + t10 * t30 + t12 * t30 - t28 * t168 + t32 * t168 - dalpha_Body * dbeta_Body * t27 * 2.0f - dalpha_Body * dbeta_Body * t33 * 2.0f + t4 * t27 * t169 + dalpha_Body * dgamma_Body * t4 * t29 * 2.0f + dbeta_Body * dgamma_Body * t4 * t28 * 2.0f) * (-1.0f / 2.0f) + t90 * t146 + t116 * t128 * t161 - t22 * t116 * t139 * t154 * 3.0f - height_Body * t2 * t7 * t22 * t50 * t164 * 6.0f - t2 * t4 * t12 * t14 * t21 * t50 * (3.0f / 2.0f), (width_Body * (t9 * t28 + t10 * t28 + t9 * t44 + t10 * t44 + t12 * t44 + t23 * t168 + t30 * t168 + dalpha_Body * dbeta_Body * t29 * 2.0f - dalpha_Body * dbeta_Body * t31 * 2.0f - t4 * t29 * t169 + dalpha_Body * dgamma_Body * t4 * t27 * 2.0f - dbeta_Body * dgamma_Body * t4 * t23 * 2.0f)) / 2.0f + t139 * t165 - t116 * t128 * t154 * 3.0f - height_Body * t2 * t4 * t22 * t49 * t146 * 6.0f - height_Body * t5 * t7 * t22 * t50 * t164 * 6.0f - t4 * t5 * t12 * t14 * t21 * t50 * (3.0f / 2.0f) }
+        //    });
 
     }
 
-    public static float[][] find_L_Arm_Bottom(float l_Alpha_Hand, float l_Beta_Hand, float l_X_Fixed, float l_Y_Fixed, float l_Z_Fixed, float length_Hand)
+    public static Matrix find_L_Arm_Bottom(float l_Alpha_Hand, float l_Beta_Hand, float l_X_Fixed, float l_Y_Fixed, float l_Z_Fixed, float length_Hand)
     {
 
         float t2 = Mathf.Cos(l_Alpha_Hand);
-        return new float[][] {
-            new float[] {l_X_Fixed + length_Hand * t2 * Mathf.Sin(l_Beta_Hand) }, 
+        return new Matrix(new float[][] {
+            new float[] {l_X_Fixed + length_Hand * t2 * Mathf.Sin(l_Beta_Hand) },
             new float[] {l_Y_Fixed + length_Hand * t2 * Mathf.Cos(l_Beta_Hand) },
             new float[] {l_Z_Fixed + length_Hand * Mathf.Sin(l_Alpha_Hand) }
-        };
+        });
     }
-    public static float[][] find_L_Hip(float alpha_Body, float beta_Body, float gamma_Body, float height_Body, float width_Body, float x_Head, float y_Head, float z_Head)
+    public static Matrix find_L_Hip(float alpha_Body, float beta_Body, float gamma_Body, float height_Body, float width_Body, float x_Head, float y_Head, float z_Head)
     {
 
         float t2 = Mathf.Cos(alpha_Body);
@@ -630,38 +676,38 @@ public class Newton_Methods : MonoBehaviour
         float t5 = Mathf.Sin(alpha_Body);
         float t6 = Mathf.Sin(beta_Body);
         float t7 = Mathf.Sin(gamma_Body);
-        return new float[][] {
+        return new Matrix(new float[][] {
             new float[] {x_Head - height_Body * t7 - (t3 * t4 * width_Body) / 2.0f},
             new float[] {y_Head - (width_Body * (t5 * t6 + t2 * t3 * t7)) / 2.0f + height_Body * t2 * t4 },
             new float[] {z_Head + (width_Body * (t2 * t6 - t3 * t5 * t7)) / 2.0f + height_Body * t4 * t5 }
-        };
+        });
     }
 
-    public static float[][] find_L_Shoulder(float alpha_Body, float beta_Body, float gamma_Body, float width_Body, float x_Head, float y_Head, float z_Head)
+    public static Matrix find_L_Shoulder(float alpha_Body, float beta_Body, float gamma_Body, float width_Body, float x_Head, float y_Head, float z_Head)
     {
         float t2 = Mathf.Cos(alpha_Body);
         float t3 = Mathf.Cos(beta_Body);
         float t4 = Mathf.Sin(alpha_Body);
         float t5 = Mathf.Sin(beta_Body);
         float t6 = Mathf.Sin(gamma_Body);
-        return new float[][] {
+        return new Matrix(new float[][] {
             new float[] {x_Head - (t3 * width_Body * Mathf.Cos(gamma_Body)) / 2.0f},
             new float[] {y_Head - (width_Body * (t4 * t5 + t2 * t3 * t6)) / 2.0f},
             new float[] {z_Head + (width_Body * (t2 * t5 - t3 * t4 * t6)) / 2.0f }
-        };
+        });
     }
 
-    public static float[][] find_R_Arm_Bottom(float length_Hand, float r_Alpha_Hand, float r_Beta_Hand, float r_X_Fixed, float r_Y_Fixed, float r_Z_Fixed)
+    public static Matrix find_R_Arm_Bottom(float length_Hand, float r_Alpha_Hand, float r_Beta_Hand, float r_X_Fixed, float r_Y_Fixed, float r_Z_Fixed)
     {
         float t2 = Mathf.Cos(r_Alpha_Hand);
-        return new float[][] {
+        return new Matrix(new float[][] {
             new float[] {r_X_Fixed - length_Hand * t2 * Mathf.Sin(r_Beta_Hand)},
             new float[] {r_Y_Fixed + length_Hand * t2 * Mathf.Cos(r_Beta_Hand)},
             new float[] {r_Z_Fixed + length_Hand * Mathf.Sin(r_Alpha_Hand) }
-        };
+        });
     }
 
-    public static float[][] find_R_Hip(float alpha_Body, float beta_Body, float gamma_Body, float height_Body, float width_Body, float x_Head, float y_Head, float z_Head)
+    public static Matrix find_R_Hip(float alpha_Body, float beta_Body, float gamma_Body, float height_Body, float width_Body, float x_Head, float y_Head, float z_Head)
     {
 
         float t2 = Mathf.Cos(alpha_Body);
@@ -670,39 +716,113 @@ public class Newton_Methods : MonoBehaviour
         float t5 = Mathf.Sin(alpha_Body);
         float t6 = Mathf.Sin(beta_Body);
         float t7 = Mathf.Sin(gamma_Body);
-        return new float[][] {
+        return new Matrix(new float[][] {
             new float[] { x_Head - height_Body * t7 + (t3 * t4 * width_Body) / 2.0f},
             new float[] {y_Head + (width_Body * (t5 * t6 + t2 * t3 * t7)) / 2.0f + height_Body * t2 * t4},
             new float[] {z_Head - (width_Body * (t2 * t6 - t3 * t5 * t7)) / 2.0f + height_Body * t4 * t5 }
-        };
+        });
     }
 
-    public static float[][] find_R_Shoulder(float alpha_Body, float beta_Body, float gamma_Body, float width_Body, float x_Head, float y_Head, float z_Head)
+    public static Matrix find_R_Shoulder(float alpha_Body, float beta_Body, float gamma_Body, float width_Body, float x_Head, float y_Head, float z_Head)
     {
         float t2 = Mathf.Cos(alpha_Body);
         float t3 = Mathf.Cos(beta_Body);
         float t4 = Mathf.Sin(alpha_Body);
         float t5 = Mathf.Sin(beta_Body);
         float t6 = Mathf.Sin(gamma_Body);
-        return new float[][] {
+        return new Matrix(new float[][] {
             new float[] {x_Head + (t3 * width_Body * Mathf.Cos(gamma_Body)) / 2.0f},
             new float[] {y_Head + (width_Body * (t4 * t5 + t2 * t3 * t6)) / 2.0f},
             new float[] {z_Head - (width_Body * (t2 * t5 - t3 * t4 * t6)) / 2.0f }
-        };
+        });
     }
 
-    public static Vector3 convert_Matrix_To_Vector3(float[][] target)
+    public static Vector3 convert_Matrix_To_Vector3(Matrix target)
     {
-        return new Vector3(target[0][0], target[2][0], target[1][0]);
+        return new Vector3(target[0, 0], target[2, 0], target[1, 0]);
     }
 
-    public static float[][] convert_Vector3_To_Matrix(Vector3 target)
+    public static Matrix convert_Vector3_To_Matrix(Vector3 target)
     {
-        return new float[][] { 
-            new float[]{target.x }, 
-            new float[]{target.y }, 
+        return new Matrix(new float[][] {
+            new float[]{target.x },
+            new float[]{target.y },
             new float[]{target.z }
-        };
+        });
+    }
+
+    public static Matrix find_Dl_Arm_Bottom(float dl_Beta_Hand, float dl_Alpha_Hand, float l_Alpha_Hand, float l_Beta_Hand, float length_Hand)
+    {
+        float t2 = Mathf.Cos(l_Alpha_Hand);
+        float t3 = Mathf.Cos(l_Beta_Hand);
+        float t4 = Mathf.Sin(l_Alpha_Hand);
+        float t5 = Mathf.Sin(l_Beta_Hand);
+        return new Matrix(new float[][] {
+            new float[] {dl_Beta_Hand * length_Hand * t2 * t3 - dl_Alpha_Hand * length_Hand * t4 * t5 },
+            new float[] { -dl_Beta_Hand * length_Hand * t2 * t5 - dl_Alpha_Hand * length_Hand * t3 * t4 },
+            new float[] { dl_Alpha_Hand * length_Hand * t2 }
+        });
+    }
+
+    public static Matrix find_Dr_Arm_Bottom(float dr_Beta_Hand, float dr_Alpha_Hand, float length_Hand, float r_Alpha_Hand, float r_Beta_Hand)
+    {
+        float t2 = Mathf.Cos(r_Alpha_Hand);
+        float t3 = Mathf.Cos(r_Beta_Hand);
+        float t4 = Mathf.Sin(r_Alpha_Hand);
+        float t5 = Mathf.Sin(r_Beta_Hand);
+        return new Matrix(new float[][] {
+            new float[] {-dr_Beta_Hand * length_Hand * t2 * t3 + dr_Alpha_Hand * length_Hand * t4 * t5 },
+            new float[] {-dr_Beta_Hand * length_Hand * t2 * t5 - dr_Alpha_Hand * length_Hand * t3 * t4 },
+            new float[] {dr_Alpha_Hand * length_Hand * t2 }
+        });
+
+    }
+
+    public static float[] find_Restrained_Velocity(float alpha_Body, float beta_Body, float dalpha_Body, float dgamma_Body, float dl_Beta_Hand, float dl_Alpha_Hand, float dr_Beta_Hand, float dr_Alpha_Hand, float gamma_Body, float l_Alpha_Hand, float l_Beta_Hand, float length_Hand, float r_Alpha_Hand, float r_Beta_Hand, float width_Body)
+    {
+
+        float t2 = Mathf.Cos(alpha_Body);
+        float t3 = Mathf.Cos(beta_Body);
+        float t4 = Mathf.Cos(gamma_Body);
+        float t5 = Mathf.Cos(l_Alpha_Hand);
+        float t6 = Mathf.Cos(l_Beta_Hand);
+        float t7 = Mathf.Sin(alpha_Body);
+        float t8 = Mathf.Cos(r_Alpha_Hand);
+        float t9 = Mathf.Cos(r_Beta_Hand);
+        float t10 = Mathf.Sin(beta_Body);
+        float t11 = Mathf.Sin(gamma_Body);
+        float t12 = Mathf.Sin(l_Alpha_Hand);
+        float t13 = Mathf.Sin(l_Beta_Hand);
+        float t14 = Mathf.Sin(r_Alpha_Hand);
+        float t15 = Mathf.Sin(r_Beta_Hand);
+        float t16 = 1.0f / width_Body;
+        float t17 = t2 * t3;
+        float t18 = t3 * t7;
+        float t19 = dalpha_Body * t2 * t10;
+        float t20 = t2 * t10 * t11;
+        float t21 = dl_Beta_Hand * length_Hand * t5 * t13;
+        float t22 = dl_Alpha_Hand * length_Hand * t6 * t12;
+        float t23 = t7 * t10 * t11;
+        float t24 = dr_Beta_Hand * length_Hand * t8 * t15;
+        float t25 = dr_Alpha_Hand * length_Hand * t9 * t14;
+        float t26 = dgamma_Body * t4 * t17;
+        float t27 = dalpha_Body * t11 * t18;
+        float t28 = -t20;
+        float t30 = t17 + t23;
+        float t29 = -t27;
+        float t31 = t18 + t28;
+        float t32 = 1.0f / t31;
+        float t33 = t19 + t26 + t29;
+        float t34 = (t33 * width_Body) / 2.0f;
+        float t35 = -t34;
+        float t36 = t24 + t25 + t34;
+        float t37 = t21 + t22 + t35;
+        float dbeta_Body = -t16 * t32 * t36 + t16 * t32 * t37;
+        float dx_Head = dl_Beta_Hand * length_Hand * t5 * t6 - dl_Alpha_Hand * length_Hand * t12 * t13 - (dgamma_Body * t3 * t11 * width_Body) / 2.0f + (t4 * t10 * t32 * t36) / 2.0f - (t4 * t10 * t32 * t37) / 2.0f;
+        float dy_Head = t21 * (-1.0f / 2.0f) - t22 / 2.0f - t24 / 2.0f - t25 / 2.0f;
+        float dz_Head = width_Body * (dalpha_Body * t7 * t10 + dalpha_Body * t11 * t17 + dgamma_Body * t4 * t18) * (-1.0f / 2.0f) + dr_Alpha_Hand * length_Hand * t8 - (t30 * t32 * t36) / 2.0f + (t30 * t32 * t37) / 2.0f;
+
+        return new float[] { dbeta_Body, dx_Head, dy_Head, dz_Head };
     }
 
 }

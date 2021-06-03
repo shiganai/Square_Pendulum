@@ -5,41 +5,56 @@ using System.Drawing;
 using System;
 using System.Threading.Tasks;
 
-public class matrix : MonoBehaviour
+public class Matrix
 {
-    // Start is called before the first frame update
-    void Start()
+
+    float[][] data;
+    int rows;
+    int cols;
+
+    public Matrix(int rows, int cols)
     {
-        float[][] test = MatrixCreate(2, 2);
-
-        float target_Deg = 180;
-        test[0][0] = Mathf.Cos(target_Deg * Mathf.Deg2Rad);
-        test[1][0] = Mathf.Sin(target_Deg * Mathf.Deg2Rad);
-        test[0][1] = -Mathf.Sin(target_Deg * Mathf.Deg2Rad);
-        test[1][1] = Mathf.Cos(target_Deg * Mathf.Deg2Rad);
-
-        float[][] test_Inverted = MatrixInverse(test);
-
-        Debug.Log(MatrixAsString(test));
-        Debug.Log(MatrixAsString(test_Inverted));
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-    public static float[][] MatrixCreate(int rows, int cols)
-    {
-        // creates a matrix initialized to all 0.0s
-        // do error checking here?
-        float[][] result = new float[rows][];
+        this.rows = rows;
+        this.cols = cols;
+        data = new float[rows][];
         for (int i = 0; i < rows; ++i)
-            result[i] = new float[cols]; // auto init to 0.0
-        return result;
+        {
+            data[i] = new float[cols]; // auto init to 0.0
+        }
+
     }
-    public static string MatrixAsString(float[][] matrix)
+
+    public Matrix(float[][] data)
     {
+        rows = data.Length;
+        cols = data[0].Length;
+        this.data = data;
+        //this.data = new float[rows][];
+        //for (int i = 0; i < rows; ++i)
+        //{
+        //    this.data[i] = new float[cols]; // auto init to 0.0
+        //    for(int j = 0; j < cols; j++)
+        //    {
+        //        this.data[i][j] = data[i][j];
+        //    }
+        //}
+    }
+
+    public float this[int rows, int cols]
+    {
+        set
+        {
+            data[rows][cols] = value;
+        }
+        get
+        {
+            return data[rows][cols];
+        }
+    }
+
+    public static string MatrixAsString(Matrix target_Matrix)
+    {
+        float[][] matrix = target_Matrix.data;
         string s = "";
         for (int i = 0; i < matrix.Length; ++i)
         {
@@ -49,21 +64,21 @@ public class matrix : MonoBehaviour
         }
         return s;
     }
-    public static float[][] MatrixProduct(float[][] matrixA, float[][] matrixB)
-    {
-        // error check, compute aRows, aCols, bCols
-        int aRows = matrixA.Length; int aCols = matrixA[0].Length;
-        int bRows = matrixB.Length; int bCols = matrixB[0].Length;
-        float[][] result = MatrixCreate(aRows, bCols);
-        Parallel.For(0, aRows, i =>
-        {
-            for (int j = 0; j < bCols; ++j)
-                for (int k = 0; k < aCols; ++k)
-                    result[i][j] += matrixA[i][k] * matrixB[k][j];
-        }
-        );
-        return result;
-    }
+    //public static float[][] MatrixProduct(float[][] matrixA, float[][] matrixB)
+    //{
+    //    // error check, compute aRows, aCols, bCols
+    //    int aRows = matrixA.Length; int aCols = matrixA[0].Length;
+    //    int bRows = matrixB.Length; int bCols = matrixB[0].Length;
+    //    Matrix result = new Matrix(aRows, bCols);
+    //    Parallel.For(0, aRows, i =>
+    //    {
+    //        for (int j = 0; j < bCols; ++j)
+    //            for (int k = 0; k < aCols; ++k)
+    //                result[i,j] += matrixA[i][k] * matrixB[k][j];
+    //    }
+    //    );
+    //    return result.data;
+    //}
     public static float[] HelperSolve(float[][] luMatrix, float[] b)
     {
         // solve luMatrix * x = b
@@ -87,10 +102,11 @@ public class matrix : MonoBehaviour
         }
         return x;
     }
-    public static float[][] MatrixInverse(float[][] matrix)
+    public static Matrix MatrixInverse(Matrix target_Matrix)
     {
+        float[][] matrix = target_Matrix.data;
         int n = matrix.Length;
-        float[][] result = MatrixDuplicate(matrix);
+        Matrix result = MatrixDuplicate(matrix);
         int[] perm;
         int toggle;
         float[][] lum = MatrixDecompose(matrix, out perm, out toggle);
@@ -108,8 +124,9 @@ public class matrix : MonoBehaviour
             }
             float[] x = HelperSolve(lum, b);
             for (int j = 0; j < n; ++j)
-                result[j][i] = x[j];
+                result[j,i] = x[j];
         }
+
         return result;
     }
     public static float[][] MatrixDecompose(float[][] matrix, out int[] perm, out int toggle)
@@ -117,7 +134,7 @@ public class matrix : MonoBehaviour
         // Doolittle LUP decomposition.
         // assumes matrix is square.
         int n = matrix.Length; // convenience
-        float[][] result = MatrixDuplicate(matrix);
+        float[][] result = MatrixDuplicate(matrix).data;
         perm = new int[n];
         for (int i = 0; i < n; ++i) { perm[i] = i; }
         toggle = 1;
@@ -154,65 +171,152 @@ public class matrix : MonoBehaviour
         } // main j column loop
         return result;
     }
-    public static float[][] MatrixDuplicate(float[][] matrix)
+    public static Matrix MatrixDuplicate(float[][] matrix)
     {
+
         // assumes matrix is not null.
-        float[][] result = MatrixCreate(matrix.Length, matrix[0].Length);
+        Matrix result = new Matrix(matrix.Length, matrix[0].Length);
         for (int i = 0; i < matrix.Length; ++i) // copy the values
             for (int j = 0; j < matrix[i].Length; ++j)
-                result[i][j] = matrix[i][j];
+                result[i,j] = matrix[i][j];
         return result;
     }
 
-    public static float[][] MatrixSum(float[][] a, float[][] b)
+    public static Matrix operator+ (Matrix a, Matrix b)
     {
-        int row_Num = a.Length;
-        int col_Num = a[0].Length;
+        int row_Num = a.rows;
+        int col_Num = a.cols;
 
-        float[][] result = matrix.MatrixCreate(row_Num, col_Num);
+        Matrix result = new Matrix(row_Num, col_Num);
 
         for (int i = 0; i < row_Num; i++)
         {
             for (int j = 0; j < col_Num; j++)
             {
-                result[i][j] = a[i][j] + b[i][j];
+                result[i,j] = a[i,j] + b[i,j];
             }
 
         }
         return result;
     }
-    public static float[][] MatrixDiff(float[][] a, float[][] b)
+    public static Matrix operator -(Matrix a)
     {
-        int row_Num = a.Length;
-        int col_Num = a[0].Length;
+        int row_Num = a.rows;
+        int col_Num = a.cols;
 
-        float[][] result = matrix.MatrixCreate(row_Num, col_Num);
+        Matrix result = new Matrix(row_Num, col_Num);
 
         for (int i = 0; i < row_Num; i++)
         {
             for (int j = 0; j < col_Num; j++)
             {
-                result[i][j] = a[i][j] - b[i][j];
+                result[i, j] = -a[i, j];
             }
 
         }
         return result;
     }
-    public static float[][] MatrixProduct(float[][] a, float b)
+    public static Matrix operator -(Matrix a, Matrix b)
     {
-        int row_Num = a.Length;
-        int col_Num = a[0].Length;
+        int row_Num = a.rows;
+        int col_Num = a.cols;
 
-        float[][] result = matrix.MatrixCreate(row_Num, col_Num);
+        Matrix result = new Matrix(row_Num, col_Num);
 
         for (int i = 0; i < row_Num; i++)
         {
             for (int j = 0; j < col_Num; j++)
             {
-                result[i][j] = a[i][j] * b;
+                result[i, j] = a[i, j] - b[i, j];
             }
 
         }
         return result;
+    }
+    public static Matrix operator *(Matrix a, float b)
+    {
+        int row_Num = a.rows;
+        int col_Num = a.cols;
+
+        Matrix result = new Matrix(row_Num, col_Num);
+
+        for (int i = 0; i < row_Num; i++)
+        {
+            for (int j = 0; j < col_Num; j++)
+            {
+                result[i, j] = a[i, j] * b;
+            }
+
+        }
+        return result;
+    }
+    public static Matrix operator *(float b, Matrix a)
+    {
+        int row_Num = a.rows;
+        int col_Num = a.cols;
+
+        Matrix result = new Matrix(row_Num, col_Num);
+
+        for (int i = 0; i < row_Num; i++)
+        {
+            for (int j = 0; j < col_Num; j++)
+            {
+                result[i, j] = a[i, j] * b;
+            }
+
+        }
+        return result;
+    }
+    public static Matrix operator *(Matrix target_MatrixA, Matrix target_MatrixB)
+    {
+        float[][] matrixA = target_MatrixA.data;
+        float[][] matrixB = target_MatrixB.data;
+        // error check, compute aRows, aCols, bCols
+        int aRows = matrixA.Length; int aCols = matrixA[0].Length;
+        int bRows = matrixB.Length; int bCols = matrixB[0].Length;
+        Matrix result = new Matrix(aRows, bCols);
+        Parallel.For(0, aRows, i =>
+        {
+            for (int j = 0; j < bCols; ++j)
+                for (int k = 0; k < aCols; ++k)
+                    result[i, j] += matrixA[i][k] * matrixB[k][j];
+        }
+        );
+        return result;
+    }
+    public static Matrix operator /(Matrix a, float b)
+    {
+        int row_Num = a.rows;
+        int col_Num = a.cols;
+
+        Matrix result = new Matrix(row_Num, col_Num);
+
+        for (int i = 0; i < row_Num; i++)
+        {
+            for (int j = 0; j < col_Num; j++)
+            {
+                result[i, j] = a[i, j] / b;
+            }
+
+        }
+        return result;
+    }
+
+    public static Matrix MatrixTranspose(Matrix a)
+    {
+        int row_Num = a.rows;
+        int col_Num = a.cols;
+        var result = new Matrix(col_Num, row_Num);
+
+        for (int i = 0; i < row_Num; i++)
+        {
+            for (int j = 0; j < col_Num; j++)
+            {
+                result[j, i] = a[i, j];
+            }
+
+        }
+        return result;
+
     }
 }
