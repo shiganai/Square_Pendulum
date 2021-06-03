@@ -58,9 +58,9 @@ public class Torque_Control : MonoBehaviour
     public float torque_Body_L_Max;
     public float torque_Body_R_Max;
 
-    public float[] r_Shoulder = new float[3];
-    public float[] l_Shoulder = new float[3];
-    public float[] r_Hip = new float[3];
+    public float dd_Threshold = 1e-1f;
+    public bool toReset = false;
+
 
     // Start is called before the first frame update
     void Start()
@@ -70,6 +70,7 @@ public class Torque_Control : MonoBehaviour
         body = GameObject.Find("body");
 
         Initialize();
+        visualization();
 
     }
 
@@ -84,7 +85,7 @@ public class Torque_Control : MonoBehaviour
         g = 1f;
         k = 1e2f;
 
-        alpha_Body = 45f * Mathf.Deg2Rad;
+        alpha_Body = 0f * Mathf.Deg2Rad;
         beta_Body = 0;
         gamma_Body = 0;
         x_Head = 0f;
@@ -97,7 +98,7 @@ public class Torque_Control : MonoBehaviour
         l_Alpha_Hand = 0f;
         l_Beta_Hand = 0;
 
-        dalpha_Body = 0;
+        dalpha_Body = 0f * Mathf.Deg2Rad;
         dbeta_Body = 0;
         dgamma_Body = 0;
         dx_Head = 0f;
@@ -109,6 +110,17 @@ public class Torque_Control : MonoBehaviour
 
         dl_Alpha_Hand = 0f;
         dl_Beta_Hand = 0;
+
+        r_P_Fixed = NMC.convert_Vector3_To_Matrix(Vector3.zero);
+        l_P_Fixed = NMC.convert_Vector3_To_Matrix(Vector3.zero);
+
+        r_X_Fixed = r_P_Fixed[0, 0];
+        r_Y_Fixed = r_P_Fixed[1, 0];
+        r_Z_Fixed = r_P_Fixed[2, 0];
+
+        l_X_Fixed = l_P_Fixed[0, 0];
+        l_Y_Fixed = l_P_Fixed[1, 0];
+        l_Z_Fixed = l_P_Fixed[2, 0];
 
         var r_Arm_Bottom = NMC.find_R_Arm_Bottom(length_Hand, r_Alpha_Hand, r_Beta_Hand, r_X_Fixed, r_Y_Fixed, r_Z_Fixed);
         var l_Arm_Bottom = NMC.find_L_Arm_Bottom(l_Alpha_Hand, l_Beta_Hand, l_X_Fixed, l_Y_Fixed, l_Z_Fixed, length_Hand);
@@ -137,40 +149,99 @@ public class Torque_Control : MonoBehaviour
     void FixedUpdate()
     {
 
+
+        var r_Arm_Bottom = NMC.find_R_Arm_Bottom(length_Hand, r_Alpha_Hand, r_Beta_Hand, r_X_Fixed, r_Y_Fixed, r_Z_Fixed);
+        var l_Arm_Bottom = NMC.find_L_Arm_Bottom(l_Alpha_Hand, l_Beta_Hand, l_X_Fixed, l_Y_Fixed, l_Z_Fixed, length_Hand);
+
+
+        var head_P = (r_Arm_Bottom + l_Arm_Bottom) / 2;
+        x_Head = head_P[0, 0];
+        y_Head = head_P[1, 0];
+        z_Head = head_P[2, 0];
+
+        //var beta_Body_Tmp = NMC.find_Restrained_Beta_Body(alpha_Body, gamma_Body, l_Alpha_Hand, l_Beta_Hand, l_X_Fixed, l_Y_Fixed, length_Hand, r_Alpha_Hand, r_Beta_Hand, r_X_Fixed, r_Y_Fixed, width_Body);
+
+        //if (!float.IsNaN(beta_Body_Tmp))
+        //{
+        //    beta_Body = beta_Body_Tmp;
+        //}
+
         //find_Restrained_Velocity();
 
-        //find_F();
+        find_F();
 
-        ////find_F_Spring();
+        //find_F_Spring();
 
 
-        //var dds_R_Hand = NMC.find_Dds_Arm_R(dr_Beta_Hand, dr_Alpha_Hand, g, length_Hand, m_Hand, r_Alpha_Hand, r_Beta_Hand, r_F_X, r_F_Y, r_F_Z);
-        //var dds_L_Hand = NMC.find_Dds_Arm_L(dl_Beta_Hand, dl_Alpha_Hand, g, l_Alpha_Hand, l_Beta_Hand, l_F_X, l_F_Y, l_F_Z, length_Hand, m_Hand);
-        //var dds_Body = NMC.find_Dds_Body(alpha_Body, beta_Body, dalpha_Body, depth_Body, dgamma_Body, g, gamma_Body, height_Body, l_F_X, l_F_Y, l_F_Z, m_Body, r_F_X, r_F_Y, r_F_Z, width_Body);
+        var dds_R_Hand = NMC.find_Dds_Arm_R(dr_Beta_Hand, dr_Alpha_Hand, g, length_Hand, m_Hand, r_Alpha_Hand, r_Beta_Hand, r_F_X, r_F_Y, r_F_Z);
+        var dds_L_Hand = NMC.find_Dds_Arm_L(dl_Beta_Hand, dl_Alpha_Hand, g, l_Alpha_Hand, l_Beta_Hand, l_F_X, l_F_Y, l_F_Z, length_Hand, m_Hand);
+        var dds_Body = NMC.find_Dds_Body(alpha_Body, beta_Body, dalpha_Body, depth_Body, dgamma_Body, g, gamma_Body, height_Body, l_F_X, l_F_Y, l_F_Z, m_Body, r_F_X, r_F_Y, r_F_Z, width_Body);
 
-        //r_Alpha_Hand += dr_Alpha_Hand * Time.fixedDeltaTime;
-        //r_Beta_Hand += dr_Beta_Hand * Time.fixedDeltaTime;
-        //l_Alpha_Hand += dl_Alpha_Hand * Time.fixedDeltaTime;
-        //l_Beta_Hand += dl_Beta_Hand * Time.fixedDeltaTime;
+        if (Mathf.Abs(dds_R_Hand[1]) < dd_Threshold && dr_Beta_Hand == 0)
+        {
+            dds_R_Hand[1] = 0;
+        }
+        else
+        {
+            Debug.Log("become 3D");
+        }
 
-        //alpha_Body += dalpha_Body * Time.fixedDeltaTime;
-        //beta_Body += dbeta_Body * Time.fixedDeltaTime;
-        //gamma_Body += dgamma_Body * Time.fixedDeltaTime;
-        //x_Head += dx_Head * Time.fixedDeltaTime;
-        //y_Head += dy_Head * Time.fixedDeltaTime;
-        //z_Head += dz_Head * Time.fixedDeltaTime;
+        if (Mathf.Abs(dds_L_Hand[1]) < dd_Threshold && dl_Beta_Hand == 0)
+        {
+            dds_L_Hand[1] = 0;
+        }
+        else
+        {
+            Debug.Log("become 3D");
+        }
+        
+        if (Mathf.Abs(dds_Body[1]) < dd_Threshold && dbeta_Body == 0)
+        {
+            dds_Body[1] = 0;
+        }
+        else
+        {
+            Debug.Log("become 3D");
+        }
+        
+        if (Mathf.Abs(dds_Body[2]) < dd_Threshold && dgamma_Body == 0)
+        {
+            dds_Body[2] = 0;
+        }
+        else
+        {
+            Debug.Log("become 3D");
+        }
 
-        //dr_Alpha_Hand += dds_R_Hand[0] * Time.fixedDeltaTime;
-        //dr_Beta_Hand += dds_R_Hand[1] * Time.fixedDeltaTime;
-        //dl_Alpha_Hand += dds_L_Hand[0] * Time.fixedDeltaTime;
-        //dl_Beta_Hand += dds_L_Hand[1] * Time.fixedDeltaTime;
+        r_Alpha_Hand += dr_Alpha_Hand * Time.fixedDeltaTime;
+        r_Beta_Hand += dr_Beta_Hand * Time.fixedDeltaTime;
+        l_Alpha_Hand += dl_Alpha_Hand * Time.fixedDeltaTime;
+        l_Beta_Hand += dl_Beta_Hand * Time.fixedDeltaTime;
 
-        //dalpha_Body += dds_Body[0] * Time.fixedDeltaTime;
-        //dbeta_Body += dds_Body[1] * Time.fixedDeltaTime;
-        //dgamma_Body += dds_Body[2] * Time.fixedDeltaTime;
+        alpha_Body += dalpha_Body * Time.fixedDeltaTime;
+        beta_Body += dbeta_Body * Time.fixedDeltaTime;
+        gamma_Body += dgamma_Body * Time.fixedDeltaTime;
+        x_Head += dx_Head * Time.fixedDeltaTime;
+        y_Head += dy_Head * Time.fixedDeltaTime;
+        z_Head += dz_Head * Time.fixedDeltaTime;
+
+        dr_Alpha_Hand += dds_R_Hand[0] * Time.fixedDeltaTime;
+        dr_Beta_Hand += dds_R_Hand[1] * Time.fixedDeltaTime;
+        dl_Alpha_Hand += dds_L_Hand[0] * Time.fixedDeltaTime;
+        dl_Beta_Hand += dds_L_Hand[1] * Time.fixedDeltaTime;
+
+        dalpha_Body += dds_Body[0] * Time.fixedDeltaTime;
+        dbeta_Body += dds_Body[1] * Time.fixedDeltaTime;
+        dgamma_Body += dds_Body[2] * Time.fixedDeltaTime;
         //dx_Head += dds_Body[3] * Time.fixedDeltaTime;
         //dy_Head += dds_Body[4] * Time.fixedDeltaTime;
         //dz_Head += dds_Body[5] * Time.fixedDeltaTime;
+
+        if (toReset)
+        {
+            Initialize();
+            toReset = false;
+        }
 
         visualization();
     }
@@ -206,22 +277,30 @@ public class Torque_Control : MonoBehaviour
         var l_Hip = NMC.find_L_Hip(alpha_Body, beta_Body, gamma_Body, height_Body, width_Body, x_Head, y_Head, z_Head);
 
         var vec_R_L = r_Shoulder - l_Shoulder;
+        var vec_Shoulder_Hip = r_Shoulder - r_Hip;
 
-        body.transform.forward = NMC.convert_Matrix_To_Vector3(r_Shoulder - l_Shoulder);
-        body.transform.right = NMC.convert_Matrix_To_Vector3(r_Shoulder - r_Hip);
-        body.transform.position = NMC.convert_Matrix_To_Vector3((r_Shoulder + l_Shoulder + r_Hip + l_Hip) / 4);
+        body.transform.rotation = Quaternion.Euler(Vector3.zero);
+        body.transform.position = Vector3.zero;
 
-        this.r_Shoulder[0] = r_Shoulder[0, 0];
-        this.r_Shoulder[1] = r_Shoulder[1, 0];
-        this.r_Shoulder[2] = r_Shoulder[2, 0];
+        var forward_Body_World = body.transform.forward;
+        //var forward_Body_World = body.transform.InverseTransformDirection(body.transform.forward);
+        body.transform.Rotate(forward_Body_World, -beta_Body * Mathf.Rad2Deg);
 
-        this.l_Shoulder[0] = l_Shoulder[0, 0];
-        this.l_Shoulder[1] = l_Shoulder[1, 0];
-        this.l_Shoulder[2] = l_Shoulder[2, 0];
+        //var up_Body_World = body.transform.up;
+        var up_Body_World = body.transform.InverseTransformDirection(body.transform.up);
+        body.transform.Rotate(up_Body_World, -gamma_Body * Mathf.Rad2Deg);
 
-        this.r_Hip[0] = r_Hip[0, 0];
-        this.r_Hip[1] = r_Hip[1, 0];
-        this.r_Hip[2] = r_Hip[2, 0];
+        //var right_Body_World = body.transform.right;
+        var right_Body_World = body.transform.InverseTransformDirection(body.transform.right);
+        body.transform.Rotate(right_Body_World, -alpha_Body * Mathf.Rad2Deg);
+
+
+        //body.transform.forward = NMC.convert_Matrix_To_Vector3(vec_R_L);
+        //body.transform.up = NMC.convert_Matrix_To_Vector3(vec_Shoulder_Hip);
+        //body.transform.position = NMC.convert_Matrix_To_Vector3((r_Shoulder + l_Shoulder + r_Hip + l_Hip) / 4);
+
+        body.transform.position = new Vector3(x_Head, z_Head, y_Head) + body.transform.forward * height_Body * 0.5f;
+
     }
 
     void find_F()

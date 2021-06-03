@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 public class Matrix
 {
-
-    float[][] data;
+    float[,] data;
+    float[][] data_Jagg;
     int rows;
     int cols;
 
@@ -16,45 +16,51 @@ public class Matrix
     {
         this.rows = rows;
         this.cols = cols;
-        data = new float[rows][];
+        data_Jagg = new float[rows][];
+        data = new float[rows, cols];
         for (int i = 0; i < rows; ++i)
         {
-            data[i] = new float[cols]; // auto init to 0.0
+            data_Jagg[i] = new float[cols]; // auto init to 0.0
         }
-
     }
 
-    public Matrix(float[][] data)
+    public Matrix(float[][] data_Jagg)
     {
-        rows = data.Length;
-        cols = data[0].Length;
-        this.data = data;
-        //this.data = new float[rows][];
-        //for (int i = 0; i < rows; ++i)
-        //{
-        //    this.data[i] = new float[cols]; // auto init to 0.0
-        //    for(int j = 0; j < cols; j++)
-        //    {
-        //        this.data[i][j] = data[i][j];
-        //    }
-        //}
+        rows = data_Jagg.Length;
+        cols = data_Jagg[0].Length;
+        
+        //this.data_Jagg = data_Jagg;
+        this.data_Jagg = new float[rows][];
+        
+        data = new float[rows, cols];
+
+        for (int i = 0; i < rows; ++i)
+        {
+            this.data_Jagg[i] = new float[cols]; // auto init to 0.0
+            for (int j = 0; j < cols; j++)
+            {
+                this.data_Jagg[i][j] = data_Jagg[i][j];
+                this.data[i,j] = data_Jagg[i][j];
+            }
+        }
     }
 
     public float this[int rows, int cols]
     {
         set
         {
-            data[rows][cols] = value;
+            data_Jagg[rows][cols] = value;
+            data[rows,cols] = value;
         }
         get
         {
-            return data[rows][cols];
+            return data[rows, cols];
         }
     }
 
     public static string MatrixAsString(Matrix target_Matrix)
     {
-        float[][] matrix = target_Matrix.data;
+        float[][] matrix = target_Matrix.data_Jagg;
         string s = "";
         for (int i = 0; i < matrix.Length; ++i)
         {
@@ -104,7 +110,7 @@ public class Matrix
     }
     public static Matrix MatrixInverse(Matrix target_Matrix)
     {
-        float[][] matrix = target_Matrix.data;
+        float[][] matrix = target_Matrix.data_Jagg;
         int n = matrix.Length;
         Matrix result = MatrixDuplicate(matrix);
         int[] perm;
@@ -134,7 +140,7 @@ public class Matrix
         // Doolittle LUP decomposition.
         // assumes matrix is square.
         int n = matrix.Length; // convenience
-        float[][] result = MatrixDuplicate(matrix).data;
+        float[][] result = MatrixDuplicate(matrix).data_Jagg;
         perm = new int[n];
         for (int i = 0; i < n; ++i) { perm[i] = i; }
         toggle = 1;
@@ -269,8 +275,8 @@ public class Matrix
     }
     public static Matrix operator *(Matrix target_MatrixA, Matrix target_MatrixB)
     {
-        float[][] matrixA = target_MatrixA.data;
-        float[][] matrixB = target_MatrixB.data;
+        float[][] matrixA = target_MatrixA.data_Jagg;
+        float[][] matrixB = target_MatrixB.data_Jagg;
         // error check, compute aRows, aCols, bCols
         int aRows = matrixA.Length; int aCols = matrixA[0].Length;
         int bRows = matrixB.Length; int bCols = matrixB[0].Length;

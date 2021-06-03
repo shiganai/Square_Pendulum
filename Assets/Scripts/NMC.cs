@@ -825,4 +825,20 @@ public class NMC : MonoBehaviour
         return new float[] { dbeta_Body, dx_Head, dy_Head, dz_Head };
     }
 
+    public static float find_Restrained_Beta_Body(float alpha_Body, float gamma_Body, float l_Alpha_Hand, float l_Beta_Hand, float l_X_Fixed, float l_Y_Fixed, float length_Hand, float r_Alpha_Hand, float r_Beta_Hand, float r_X_Fixed, float r_Y_Fixed, float width_Body)
+    {
+
+        float t2 = Mathf.Cos(alpha_Body);
+        float t3 = Mathf.Cos(gamma_Body);
+        float t4 = Mathf.Cos(l_Alpha_Hand);
+        float t5 = Mathf.Cos(r_Alpha_Hand);
+        float t6 = Mathf.Sin(gamma_Body);
+        float t7 = Mathf.Sin(l_Beta_Hand);
+        float t8 = Mathf.Sin(r_Beta_Hand);
+        float t9 = 1.0f / width_Body;
+        float t10 = 1.0f / t3;
+        float beta_Body = Mathf.Atan2((t9 * t10 * (-l_Y_Fixed * t3 + r_Y_Fixed * t3 + l_X_Fixed * t2 * t6 - r_X_Fixed * t2 * t6 - length_Hand * t3 * t4 * Mathf.Cos(l_Beta_Hand) + length_Hand * t3 * t5 * Mathf.Cos(r_Beta_Hand) + length_Hand * t2 * t4 * t6 * t7 + length_Hand * t2 * t5 * t6 * t8)) / Mathf.Sin(alpha_Body), -t9 * t10 * (l_X_Fixed - r_X_Fixed + length_Hand * t4 * t7 + length_Hand * t5 * t8));
+        return beta_Body;
+    }
+
 }
