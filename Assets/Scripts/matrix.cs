@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 public class Matrix
 {
-    float[,] data;
-    float[][] data_Jagg;
+    public float[,] data;
+    public float[][] data_Jagg;
     int rows;
     int cols;
 
@@ -28,10 +28,10 @@ public class Matrix
     {
         rows = data_Jagg.Length;
         cols = data_Jagg[0].Length;
-        
+
         //this.data_Jagg = data_Jagg;
         this.data_Jagg = new float[rows][];
-        
+
         data = new float[rows, cols];
 
         for (int i = 0; i < rows; ++i)
@@ -40,7 +40,28 @@ public class Matrix
             for (int j = 0; j < cols; j++)
             {
                 this.data_Jagg[i][j] = data_Jagg[i][j];
-                this.data[i,j] = data_Jagg[i][j];
+                this.data[i, j] = data_Jagg[i][j];
+            }
+        }
+    }
+
+    public Matrix(float[,] data)
+    {
+        rows = data.GetLength(0);
+        cols = data.GetLength(1);
+
+        //this.data_Jagg = data_Jagg;
+        this.data_Jagg = new float[rows][];
+
+        this.data = new float[rows, cols];
+
+        for (int i = 0; i < rows; ++i)
+        {
+            this.data_Jagg[i] = new float[cols]; // auto init to 0.0
+            for (int j = 0; j < cols; j++)
+            {
+                this.data_Jagg[i][j] = data[i,j];
+                this.data[i, j] = data[i,j];
             }
         }
     }
@@ -50,7 +71,7 @@ public class Matrix
         set
         {
             data_Jagg[rows][cols] = value;
-            data[rows,cols] = value;
+            data[rows, cols] = value;
         }
         get
         {
@@ -324,5 +345,47 @@ public class Matrix
         }
         return result;
 
+    }
+
+    public static Matrix MatrixDockRows(Matrix a, Matrix b)
+    {
+        int row_Num = a.rows + b.rows;
+        int col_Num = a.cols;
+        if(col_Num != b.cols)
+        {
+            throw new Exception("Size does not match");
+        }
+
+        var result = new Matrix(row_Num, col_Num);
+        for (int row_Index = 0; row_Index < a.rows; row_Index++)
+        {
+            for (int col_Index = 0; col_Index < col_Num; col_Index++)
+            {
+                result[row_Index, col_Index] = a[row_Index, col_Index];
+            }
+        }
+        for (int row_Index = 0; row_Index < a.rows; row_Index++)
+        {
+            for (int col_Index = 0; col_Index < col_Num; col_Index++)
+            {
+                result[row_Index + a.rows, col_Index] = b[row_Index, col_Index];
+            }
+        }
+        return result;
+    }
+
+    public static Matrix MatrixTrim(Matrix target,int row_Start, int row_Num, int col_Start, int col_Num)
+    {
+
+        var result = new Matrix(row_Num, col_Num);
+
+        for (int row_Index = 0; row_Index < row_Num; row_Index++)
+        {
+            for (int col_Index = 0; col_Index < col_Num; col_Index++)
+            {
+                result[row_Index, col_Index] = target[row_Index + row_Start, col_Index + col_Start];
+            }
+        }
+        return result;
     }
 }
