@@ -98,17 +98,17 @@ public class Torque_Control : MonoBehaviour
         l_Alpha_Hand = 0f;
         l_Beta_Hand = 0;
 
-        dalpha_Body = 0f * Mathf.Deg2Rad;
+        dalpha_Body = 2;
         dbeta_Body = 0;
         dgamma_Body = 0;
         dx_Head = 0f;
         dy_Head = 0f;
         dz_Head = 0f;
 
-        dr_Alpha_Hand = 0;
+        dr_Alpha_Hand = 2;
         dr_Beta_Hand = 0;
 
-        dl_Alpha_Hand = 0f;
+        dl_Alpha_Hand = 2;
         dl_Beta_Hand = 0;
 
         r_P_Fixed = NMC.convert_Vector3_To_Matrix(Vector3.zero);
