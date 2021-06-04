@@ -88,30 +88,30 @@ public class Torque_Control : MonoBehaviour
         g = 1f;
         //k = 1e2f;
 
-        alpha_Body = 0f * Mathf.Deg2Rad;
+        alpha_Body = 180f * Mathf.Deg2Rad;
         beta_Body = 0;
         gamma_Body = 0;
         x_Head = 0f;
-        y_Head = 1f;
+        y_Head = -1f;
         z_Head = 0f;
 
-        r_Alpha_Hand = 0f * Mathf.Deg2Rad;
+        r_Alpha_Hand = 180f * Mathf.Deg2Rad;
         r_Beta_Hand = 0;
 
-        l_Alpha_Hand = 0f;
+        l_Alpha_Hand = 180f * Mathf.Deg2Rad;
         l_Beta_Hand = 0;
 
-        dalpha_Body = 0;
+        dalpha_Body = 2;
         dbeta_Body = 0;
         dgamma_Body = 0;
         dx_Head = 0f;
         dy_Head = 0f;
         dz_Head = 0f;
 
-        dr_Alpha_Hand = 0;
+        dr_Alpha_Hand = 2;
         dr_Beta_Hand = 0;
 
-        dl_Alpha_Hand = 0f;
+        dl_Alpha_Hand = 2f;
         dl_Beta_Hand = 0;
 
         r_Tau_Alpha_Shoulder = 0;

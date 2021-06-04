@@ -288,7 +288,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 6
+  orthographic size: 3
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -311,13 +311,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 207810761}
-  m_LocalRotation: {x: -0, y: 0.6670211, z: -0, w: 0.7450389}
-  m_LocalPosition: {x: -4.14, y: 0, z: 0.28}
+  m_LocalRotation: {x: 0.324239, y: 0.6005424, z: -0.29028592, w: 0.6707846}
+  m_LocalPosition: {x: -2.62, y: 3.68, z: 0.44}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 83.675, z: 0}
+  m_LocalEulerAnglesHint: {x: 51.596, y: 83.675, z: 0}
 --- !u!1 &608650806
 GameObject:
   m_ObjectHideFlags: 0
@@ -645,8 +645,12 @@ MonoBehaviour:
   graph_Controler: {fileID: 0}
   torque_Body_L_Max: 0
   torque_Body_R_Max: 0
-  dd_Threshold: 1
+  dd_Threshold: 10
   toReset: 0
+  r_Tau_Alpha_Shoulder: 0
+  l_Tau_Alpha_Shoulder: 0
+  r_Tau_Beta_Shoulder: 0
+  l_Tau_Beta_Shoulder: 0
 --- !u!54 &652216697
 Rigidbody:
   m_ObjectHideFlags: 0
