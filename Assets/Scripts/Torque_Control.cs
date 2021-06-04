@@ -101,7 +101,7 @@ public class Torque_Control : MonoBehaviour
         l_Alpha_Hand = 0f;
         l_Beta_Hand = 0;
 
-        dalpha_Body = 0f * Mathf.Deg2Rad;
+        dalpha_Body = 0;
         dbeta_Body = 0;
         dgamma_Body = 0;
         dx_Head = 0f;
