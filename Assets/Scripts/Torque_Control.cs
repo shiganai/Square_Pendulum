@@ -86,8 +86,8 @@ public class Torque_Control : MonoBehaviour
         m_Hand = 1f;
         length_Hand = 1f;
         g = 1f;
-        //k = 1e2f;
-        //c = 1e2f;
+        k = -200;
+        c = -27;
 
         alpha_Body = 180f * Mathf.Deg2Rad;
         beta_Body = 0;
@@ -214,7 +214,7 @@ public class Torque_Control : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        //l_Tau_Alpha_Shoulder = r_Tau_Alpha_Shoulder;
+        l_Tau_Alpha_Shoulder = r_Tau_Alpha_Shoulder;
 
         //find_Restrained_Position();
 

@@ -642,8 +642,8 @@ MonoBehaviour:
   r_F_X: 0
   r_F_Y: 0
   r_F_Z: 0
-  k: -20
-  c: -20
+  k: -200
+  c: -27
   graph_Controler: {fileID: 0}
   torque_Body_L_Max: 0
   torque_Body_R_Max: 0
