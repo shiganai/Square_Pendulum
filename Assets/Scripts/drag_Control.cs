@@ -26,10 +26,10 @@ public class drag_Control : MonoBehaviour
 		x_Value = 0;
 		y_Value = 0;
 
-		transform.position = new Vector3((left_Limit + right_Limit) / 2, (bottom_Limit + top_Limit) / 2, 0);
+        transform.position = new Vector3((left_Limit + right_Limit) / 2, (bottom_Limit + top_Limit) / 2, 0);
 
 
-		var test = new Matrix(2, 2);
+        var test = new Matrix(2, 2);
 
 		//float target_Deg = 10;
 		//test[0][0] = Mathf.Cos(target_Deg * Mathf.Deg2Rad);
