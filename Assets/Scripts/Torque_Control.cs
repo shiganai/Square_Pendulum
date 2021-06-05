@@ -54,6 +54,8 @@ public class Torque_Control : MonoBehaviour
     private Matrix l_P_Fixed;
 
     public drag_Control graph_Controler;
+    public scroll_Control scrollbar;
+    public slider_contro slider;
 
     public float torque_Body_L_Max;
     public float torque_Body_R_Max;
@@ -63,6 +65,8 @@ public class Torque_Control : MonoBehaviour
 
     public float r_Tau_Alpha_Shoulder, l_Tau_Alpha_Shoulder;
     public float r_Tau_Beta_Shoulder, l_Tau_Beta_Shoulder;
+
+    public float coeffs_Tau;
 
 
     // Start is called before the first frame update
@@ -86,33 +90,33 @@ public class Torque_Control : MonoBehaviour
         m_Hand = 1f;
         length_Hand = 1f;
         g = 1f;
-        k = -200;
-        c = -27;
+        //k = -200;
+        //c = -27;
 
-        alpha_Body = 180f * Mathf.Deg2Rad;
+        alpha_Body = 100f * Mathf.Deg2Rad;
         beta_Body = 0;
         gamma_Body = 0;
         x_Head = 0f;
-        y_Head = -1f;
-        z_Head = 0f;
+        y_Head = 1f * Mathf.Cos(alpha_Body);
+        z_Head = 1f * Mathf.Sin(alpha_Body);
 
-        r_Alpha_Hand = 180f * Mathf.Deg2Rad;
+        r_Alpha_Hand = 100f * Mathf.Deg2Rad;
         r_Beta_Hand = 0;
 
-        l_Alpha_Hand = 180f * Mathf.Deg2Rad;
+        l_Alpha_Hand = 100f * Mathf.Deg2Rad;
         l_Beta_Hand = 0;
 
-        dalpha_Body = 0;
+        dalpha_Body = 1;
         dbeta_Body = 0;
         dgamma_Body = 0;
         dx_Head = 0f;
         dy_Head = 0f;
         dz_Head = 0f;
 
-        dr_Alpha_Hand = 0;
+        dr_Alpha_Hand = 1;
         dr_Beta_Hand = 0;
 
-        dl_Alpha_Hand = 0f;
+        dl_Alpha_Hand = 1;
         dl_Beta_Hand = 0;
 
         r_Tau_Alpha_Shoulder = 0;
@@ -214,15 +218,30 @@ public class Torque_Control : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        var graph_Value = graph_Controler.get_Graph_Value();
-        r_Tau_Alpha_Shoulder = graph_Value[0] * torque_Body_R_Max;
+        //var graph_Value = graph_Controler.get_Graph_Value();
+        //r_Tau_Alpha_Shoulder = graph_Value[0] * torque_Body_R_Max;
+
+        var slider_Value = slider.GetValue();
+        r_Tau_Alpha_Shoulder = slider_Value * torque_Body_R_Max;
+
         l_Tau_Alpha_Shoulder = r_Tau_Alpha_Shoulder;
 
-        var r_Tau_Alpha_Shoulder_Change = graph_Value[1] * torque_Body_L_Max;
-        var l_Tau_Alpha_Shoulder_Change = -graph_Value[1] * torque_Body_L_Max;
+        var scroll_Value = scrollbar.GetValue() * 2 - 1;
+
+        var r_Tau_Alpha_Shoulder_Change = scroll_Value * torque_Body_L_Max;
+        var l_Tau_Alpha_Shoulder_Change = -scroll_Value * torque_Body_L_Max;
 
         r_Tau_Alpha_Shoulder += r_Tau_Alpha_Shoulder_Change;
         l_Tau_Alpha_Shoulder += l_Tau_Alpha_Shoulder_Change;
+
+        if (Mathf.Abs(r_Alpha_Hand - alpha_Body) > 30 * Mathf.Deg2Rad)
+        {
+            r_Tau_Alpha_Shoulder += (dr_Alpha_Hand - dalpha_Body) * coeffs_Tau;
+        }
+        if (Mathf.Abs(l_Alpha_Hand - alpha_Body) > 30 * Mathf.Deg2Rad)
+        {
+            l_Tau_Alpha_Shoulder += (dl_Alpha_Hand - dalpha_Body) * coeffs_Tau;
+        }
 
 
         //find_Restrained_Position();
@@ -395,7 +414,7 @@ public class Torque_Control : MonoBehaviour
         }
         else
         {
-            Debug.Log("become 3D");
+            //Debug.Log("become 3D");
         }
 
         if (Mathf.Abs(dds_L_Hand[1]) < dd_Threshold && dl_Beta_Hand == 0)
@@ -404,7 +423,7 @@ public class Torque_Control : MonoBehaviour
         }
         else
         {
-            Debug.Log("become 3D");
+            //Debug.Log("become 3D");
         }
 
         if (Mathf.Abs(dds_Body[1]) < dd_Threshold && dbeta_Body == 0)
@@ -413,7 +432,7 @@ public class Torque_Control : MonoBehaviour
         }
         else
         {
-            Debug.Log("become 3D");
+            //Debug.Log("become 3D");
         }
 
         if (Mathf.Abs(dds_Body[2]) < dd_Threshold && dgamma_Body == 0)
@@ -422,7 +441,7 @@ public class Torque_Control : MonoBehaviour
         }
         else
         {
-            Debug.Log("become 3D");
+            //Debug.Log("become 3D");
         }
 
         r_Alpha_Hand += dr_Alpha_Hand * Time.fixedDeltaTime;
