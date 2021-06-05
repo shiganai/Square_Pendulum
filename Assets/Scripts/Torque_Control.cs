@@ -214,7 +214,16 @@ public class Torque_Control : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        var graph_Value = graph_Controler.get_Graph_Value();
+        r_Tau_Alpha_Shoulder = graph_Value[0] * torque_Body_R_Max;
         l_Tau_Alpha_Shoulder = r_Tau_Alpha_Shoulder;
+
+        var r_Tau_Alpha_Shoulder_Change = graph_Value[1] * torque_Body_L_Max;
+        var l_Tau_Alpha_Shoulder_Change = -graph_Value[1] * torque_Body_L_Max;
+
+        r_Tau_Alpha_Shoulder += r_Tau_Alpha_Shoulder_Change;
+        l_Tau_Alpha_Shoulder += l_Tau_Alpha_Shoulder_Change;
+
 
         //find_Restrained_Position();
 
