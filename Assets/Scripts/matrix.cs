@@ -5,14 +5,14 @@ using System.Drawing;
 using System;
 using System.Threading.Tasks;
 
-public class Matrix
+public class matrix
 {
     public float[,] data;
     public float[][] data_Jagg;
     int rows;
     int cols;
 
-    public Matrix(int rows, int cols)
+    public matrix(int rows, int cols)
     {
         this.rows = rows;
         this.cols = cols;
@@ -24,7 +24,7 @@ public class Matrix
         }
     }
 
-    public Matrix(float[][] data_Jagg)
+    public matrix(float[][] data_Jagg)
     {
         rows = data_Jagg.Length;
         cols = data_Jagg[0].Length;
@@ -45,7 +45,7 @@ public class Matrix
         }
     }
 
-    public Matrix(float[,] data)
+    public matrix(float[,] data)
     {
         rows = data.GetLength(0);
         cols = data.GetLength(1);
@@ -79,9 +79,9 @@ public class Matrix
         }
     }
 
-    public static string MatrixAsString(Matrix target_Matrix)
+    public static string matrixAsString(matrix target_matrix)
     {
-        float[][] matrix = target_Matrix.data_Jagg;
+        float[][] matrix = target_matrix.data_Jagg;
         string s = "";
         for (int i = 0; i < matrix.Length; ++i)
         {
@@ -91,12 +91,12 @@ public class Matrix
         }
         return s;
     }
-    //public static float[][] MatrixProduct(float[][] matrixA, float[][] matrixB)
+    //public static float[][] matrixProduct(float[][] matrixA, float[][] matrixB)
     //{
     //    // error check, compute aRows, aCols, bCols
     //    int aRows = matrixA.Length; int aCols = matrixA[0].Length;
     //    int bRows = matrixB.Length; int bCols = matrixB[0].Length;
-    //    Matrix result = new Matrix(aRows, bCols);
+    //    matrix result = new matrix(aRows, bCols);
     //    Parallel.For(0, aRows, i =>
     //    {
     //        for (int j = 0; j < bCols; ++j)
@@ -106,37 +106,37 @@ public class Matrix
     //    );
     //    return result.data;
     //}
-    public static float[] HelperSolve(float[][] luMatrix, float[] b)
+    public static float[] HelperSolve(float[][] lumatrix, float[] b)
     {
-        // solve luMatrix * x = b
-        int n = luMatrix.Length;
+        // solve lumatrix * x = b
+        int n = lumatrix.Length;
         float[] x = new float[n];
         b.CopyTo(x, 0);
         for (int i = 1; i < n; ++i)
         {
             float sum = x[i];
             for (int j = 0; j < i; ++j)
-                sum -= luMatrix[i][j] * x[j];
+                sum -= lumatrix[i][j] * x[j];
             x[i] = sum;
         }
-        x[n - 1] /= luMatrix[n - 1][n - 1];
+        x[n - 1] /= lumatrix[n - 1][n - 1];
         for (int i = n - 2; i >= 0; --i)
         {
             float sum = x[i];
             for (int j = i + 1; j < n; ++j)
-                sum -= luMatrix[i][j] * x[j];
-            x[i] = sum / luMatrix[i][i];
+                sum -= lumatrix[i][j] * x[j];
+            x[i] = sum / lumatrix[i][i];
         }
         return x;
     }
-    public static Matrix MatrixInverse(Matrix target_Matrix)
+    public static matrix matrixInverse(matrix target_matrix)
     {
-        float[][] matrix = target_Matrix.data_Jagg;
+        float[][] matrix = target_matrix.data_Jagg;
         int n = matrix.Length;
-        Matrix result = MatrixDuplicate(matrix);
+        matrix result = matrixDuplicate(matrix);
         int[] perm;
         int toggle;
-        float[][] lum = MatrixDecompose(matrix, out perm, out toggle);
+        float[][] lum = matrixDecompose(matrix, out perm, out toggle);
         if (lum == null)
             throw new Exception("Unable to compute inverse");
         float[] b = new float[n];
@@ -156,12 +156,12 @@ public class Matrix
 
         return result;
     }
-    public static float[][] MatrixDecompose(float[][] matrix, out int[] perm, out int toggle)
+    public static float[][] matrixDecompose(float[][] matrix, out int[] perm, out int toggle)
     {
         // Doolittle LUP decomposition.
         // assumes matrix is square.
         int n = matrix.Length; // convenience
-        float[][] result = MatrixDuplicate(matrix).data_Jagg;
+        float[][] result = matrixDuplicate(matrix).data_Jagg;
         perm = new int[n];
         for (int i = 0; i < n; ++i) { perm[i] = i; }
         toggle = 1;
@@ -198,23 +198,23 @@ public class Matrix
         } // main j column loop
         return result;
     }
-    public static Matrix MatrixDuplicate(float[][] matrix)
+    public static matrix matrixDuplicate(float[][] matrix)
     {
 
         // assumes matrix is not null.
-        Matrix result = new Matrix(matrix.Length, matrix[0].Length);
+        matrix result = new matrix(matrix.Length, matrix[0].Length);
         for (int i = 0; i < matrix.Length; ++i) // copy the values
             for (int j = 0; j < matrix[i].Length; ++j)
                 result[i,j] = matrix[i][j];
         return result;
     }
 
-    public static Matrix operator+ (Matrix a, Matrix b)
+    public static matrix operator+ (matrix a, matrix b)
     {
         int row_Num = a.rows;
         int col_Num = a.cols;
 
-        Matrix result = new Matrix(row_Num, col_Num);
+        matrix result = new matrix(row_Num, col_Num);
 
         for (int i = 0; i < row_Num; i++)
         {
@@ -226,12 +226,12 @@ public class Matrix
         }
         return result;
     }
-    public static Matrix operator -(Matrix a)
+    public static matrix operator -(matrix a)
     {
         int row_Num = a.rows;
         int col_Num = a.cols;
 
-        Matrix result = new Matrix(row_Num, col_Num);
+        matrix result = new matrix(row_Num, col_Num);
 
         for (int i = 0; i < row_Num; i++)
         {
@@ -243,12 +243,12 @@ public class Matrix
         }
         return result;
     }
-    public static Matrix operator -(Matrix a, Matrix b)
+    public static matrix operator -(matrix a, matrix b)
     {
         int row_Num = a.rows;
         int col_Num = a.cols;
 
-        Matrix result = new Matrix(row_Num, col_Num);
+        matrix result = new matrix(row_Num, col_Num);
 
         for (int i = 0; i < row_Num; i++)
         {
@@ -260,12 +260,12 @@ public class Matrix
         }
         return result;
     }
-    public static Matrix operator *(Matrix a, float b)
+    public static matrix operator *(matrix a, float b)
     {
         int row_Num = a.rows;
         int col_Num = a.cols;
 
-        Matrix result = new Matrix(row_Num, col_Num);
+        matrix result = new matrix(row_Num, col_Num);
 
         for (int i = 0; i < row_Num; i++)
         {
@@ -277,12 +277,12 @@ public class Matrix
         }
         return result;
     }
-    public static Matrix operator *(float b, Matrix a)
+    public static matrix operator *(float b, matrix a)
     {
         int row_Num = a.rows;
         int col_Num = a.cols;
 
-        Matrix result = new Matrix(row_Num, col_Num);
+        matrix result = new matrix(row_Num, col_Num);
 
         for (int i = 0; i < row_Num; i++)
         {
@@ -294,14 +294,14 @@ public class Matrix
         }
         return result;
     }
-    public static Matrix operator *(Matrix target_MatrixA, Matrix target_MatrixB)
+    public static matrix operator *(matrix target_matrixA, matrix target_matrixB)
     {
-        float[][] matrixA = target_MatrixA.data_Jagg;
-        float[][] matrixB = target_MatrixB.data_Jagg;
+        float[][] matrixA = target_matrixA.data_Jagg;
+        float[][] matrixB = target_matrixB.data_Jagg;
         // error check, compute aRows, aCols, bCols
         int aRows = matrixA.Length; int aCols = matrixA[0].Length;
         int bRows = matrixB.Length; int bCols = matrixB[0].Length;
-        Matrix result = new Matrix(aRows, bCols);
+        matrix result = new matrix(aRows, bCols);
         Parallel.For(0, aRows, i =>
         {
             for (int j = 0; j < bCols; ++j)
@@ -311,12 +311,12 @@ public class Matrix
         );
         return result;
     }
-    public static Matrix operator /(Matrix a, float b)
+    public static matrix operator /(matrix a, float b)
     {
         int row_Num = a.rows;
         int col_Num = a.cols;
 
-        Matrix result = new Matrix(row_Num, col_Num);
+        matrix result = new matrix(row_Num, col_Num);
 
         for (int i = 0; i < row_Num; i++)
         {
@@ -329,11 +329,11 @@ public class Matrix
         return result;
     }
 
-    public static Matrix MatrixTranspose(Matrix a)
+    public static matrix matrixTranspose(matrix a)
     {
         int row_Num = a.rows;
         int col_Num = a.cols;
-        var result = new Matrix(col_Num, row_Num);
+        var result = new matrix(col_Num, row_Num);
 
         for (int i = 0; i < row_Num; i++)
         {
@@ -347,7 +347,7 @@ public class Matrix
 
     }
 
-    public static Matrix MatrixDockRows(Matrix a, Matrix b)
+    public static matrix matrixDockRows(matrix a, matrix b)
     {
         int row_Num = a.rows + b.rows;
         int col_Num = a.cols;
@@ -356,7 +356,7 @@ public class Matrix
             throw new Exception("Size does not match");
         }
 
-        var result = new Matrix(row_Num, col_Num);
+        var result = new matrix(row_Num, col_Num);
         for (int row_Index = 0; row_Index < a.rows; row_Index++)
         {
             for (int col_Index = 0; col_Index < col_Num; col_Index++)
@@ -374,10 +374,10 @@ public class Matrix
         return result;
     }
 
-    public static Matrix MatrixTrim(Matrix target,int row_Start, int row_Num, int col_Start, int col_Num)
+    public static matrix matrixTrim(matrix target,int row_Start, int row_Num, int col_Start, int col_Num)
     {
 
-        var result = new Matrix(row_Num, col_Num);
+        var result = new matrix(row_Num, col_Num);
 
         for (int row_Index = 0; row_Index < row_Num; row_Index++)
         {
@@ -387,5 +387,19 @@ public class Matrix
             }
         }
         return result;
+    }
+
+    public static Vector3 convert_matrix_To_Vector3(matrix target)
+    {
+        return new Vector3(target[0, 0], target[2, 0], target[1, 0]);
+    }
+
+    public static matrix convert_Vector3_To_matrix(Vector3 target)
+    {
+        return new matrix(new float[][] {
+            new float[]{target.x },
+            new float[]{target.y },
+            new float[]{target.z }
+        });
     }
 }
