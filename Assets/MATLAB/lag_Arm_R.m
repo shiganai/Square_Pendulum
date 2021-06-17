@@ -8,36 +8,41 @@ c = parcluster();
 syms width_Body real
 
 syms m_Hand real
-syms length_Hand real
+syms length_Hand radius_Hand real
 syms g real
 
 syms r_X_Fixed r_Y_Fixed r_Z_Fixed real
 syms r_F_X r_F_Y r_F_Z real
 syms r_Tau_Alpha_Shoulder real
 syms r_Tau_Beta_Shoulder real
+syms r_Tau_Gamma_Shoulder real
 
 syms r_Alpha_Hand_Pre(t)
 syms r_Beta_Hand_Pre(t)
+syms r_Gamma_Hand_Pre(t)
 
 %%
 syms r_Alpha_Hand dr_Alpha_Hand ddr_Alpha_Hand real
 syms r_Beta_Hand dr_Beta_Hand ddr_Beta_Hand real
+syms r_Gamma_Hand dr_Gamma_Hand ddr_Gamma_Hand real
 
 syms_Replaced = [
     r_Alpha_Hand_Pre diff(r_Alpha_Hand_Pre, t) diff(r_Alpha_Hand_Pre, t, t), ...
     r_Beta_Hand_Pre diff(r_Beta_Hand_Pre, t) diff(r_Beta_Hand_Pre, t, t), ...
+    r_Gamma_Hand_Pre diff(r_Gamma_Hand_Pre, t) diff(r_Gamma_Hand_Pre, t, t), ...
     ];
 
 syms_Replacing = [
     r_Alpha_Hand dr_Alpha_Hand ddr_Alpha_Hand ...
     r_Beta_Hand dr_Beta_Hand ddr_Beta_Hand ...
+    r_Gamma_Hand dr_Gamma_Hand ddr_Gamma_Hand ...
     ];
 
 %%
 I_Hand = 1/12 * m_Hand * [
-    length_Hand^2 + 0^2, 0, 0;
-    0, 0, 0^2 + 0^2;
-    0, 0^2 + length_Hand^2, 0;
+    length_Hand^2 + radius_Hand^2, 0, 0;
+    0, 0, radius_Hand^2 + radius_Hand^2;
+    0, radius_Hand^2 + length_Hand^2, 0;
     ];
 
 % I_Hand = 1/12 * m_Hand * [
@@ -78,6 +83,8 @@ r_Arm_G = r_Arm_G * r_Trans_Matrix_Origin;
 %{/
 %% Rotate
 r_Rotate_Matrix = ...
+    [cos(r_Gamma_Hand_Pre), 0, sin(r_Gamma_Hand_Pre);0, 1, 0;-sin(r_Gamma_Hand_Pre), 0, cos(r_Gamma_Hand_Pre);]' ...
+    * ...
     [cos(r_Beta_Hand_Pre), -sin(r_Beta_Hand_Pre), 0; sin(r_Beta_Hand_Pre), cos(r_Beta_Hand_Pre), 0; 0, 0, 1;]' ...
     * ...
     [1, 0, 0; 0, cos(r_Alpha_Hand_Pre), -sin(r_Alpha_Hand_Pre); 0, sin(r_Alpha_Hand_Pre), cos(r_Alpha_Hand_Pre);]' ...
@@ -96,6 +103,8 @@ r_Arm_G = r_Arm_G + [r_X_Fixed, r_Y_Fixed, r_Z_Fixed];
 %% 
 ohm_R = formula(r_Rotate_Matrix' * dr_Rotate_Matrix);
 
+% ohm_R = simplify(subs(ohm_R, syms_Replaced, syms_Replacing));
+
 omega_X = ohm_R(2,3);
 omega_Y = ohm_R(3,1);
 omega_Z = ohm_R(1,2);
@@ -104,7 +113,7 @@ omega_R = simplify([omega_X; omega_Y; omega_Z]);
 omega_Euler_R = simplify(r_Rotate_Matrix * omega_R);
 
 omega_R_Tmp = simplify(subs(omega_R, syms_Replaced, syms_Replacing));
-unit_Vector_R = coeffs_Vector(omega_R_Tmp, [dr_Alpha_Hand, dr_Beta_Hand]);
+unit_Vector_R = coeffs_Vector(omega_R_Tmp, [dr_Alpha_Hand, dr_Beta_Hand, dr_Gamma_Hand]);
 unit_Vector_R = subs(unit_Vector_R, syms_Replacing, syms_Replaced);
 
 %}
@@ -132,22 +141,28 @@ U = ...
 
 L = T - U;
 
-r_Tau_Vec = (-r_Tau_Alpha_Shoulder) * unit_Vector_R(:,1) + (-r_Tau_Beta_Shoulder) * unit_Vector_R(:,2);
+r_Tau_Vec = (-r_Tau_Alpha_Shoulder) * unit_Vector_R(:,1) ...
+    + (-r_Tau_Beta_Shoulder) * unit_Vector_R(:,2) ...
+    + (-r_Tau_Gamma_Shoulder) * unit_Vector_R(:,3);
 
-coeffs_Tau_R_Alpha = unit_Vector_R(:,1)' * r_Tau_Vec;
-coeffs_Tau_R_Beta = unit_Vector_R(:,2)' * r_Tau_Vec;
+coeffs_Tau_R_Hand = unit_Vector_R(:, 1:3)\r_Tau_Vec;
+
+coeffs_Tau_R_Alpha = coeffs_Tau_R_Hand(1);
+coeffs_Tau_R_Beta = coeffs_Tau_R_Hand(2);
+coeffs_Tau_R_Gamma = coeffs_Tau_R_Hand(3);
 
 %%
 
 equations = [
     -functionalDerivative(L, r_Alpha_Hand_Pre) == coeffs_Tau_R_Alpha - ([r_F_X, r_F_Y, r_F_Z] * diff(r_Arm_Bottom, r_Alpha_Hand_Pre)');
     -functionalDerivative(L, r_Beta_Hand_Pre) == coeffs_Tau_R_Beta - ([r_F_X, r_F_Y, r_F_Z] * diff(r_Arm_Bottom, r_Beta_Hand_Pre)');
+    -functionalDerivative(L, r_Gamma_Hand_Pre) == coeffs_Tau_R_Gamma - ([r_F_X, r_F_Y, r_F_Z] * diff(r_Arm_Bottom, r_Gamma_Hand_Pre)');
     ];
 equations = subs(equations, syms_Replaced, syms_Replacing);
 
 %% Full forward dynamics
 %{
-variables = [ddr_Alpha_Hand, ddr_Beta_Hand];
+variables = [ddr_Alpha_Hand, ddr_Beta_Hand, ddr_Gamma_Hand];
 
 [A, B] = equationsToMatrix(equations, variables);
 toc
@@ -159,41 +174,41 @@ parallel.defaultClusterProfile('local');
 c = parcluster();
 
 job = createJob(c);
-createTask(job, @matlabFunction, 1,{X(1), X(2), ...
+createTask(job, @matlabFunction, 1,{X(1), X(2), X(3), ...
     'file', 'FFD_Dds_Arm_R.m', 'outputs', ...
-    {'ddr_Alpha_Hand', 'ddr_Beta_Hand'}});
+    {'ddr_Alpha_Hand', 'ddr_Beta_Hand', 'ddr_Gamma_Hand'}});
 submit(job)
 job.Tasks
 
-ddr_Arm_Bottom = diff(r_Arm_Bottom, t, t);
-ddr_Arm_Bottom = subs(ddr_Arm_Bottom, syms_Replaced, syms_Replacing);
-ddr_Arm_Bottom = subs(ddr_Arm_Bottom, variables, X');
-
-[coeffs_Ddr_Arm_Bottom(1, :), ~] = coeffs(ddr_Arm_Bottom(1), [r_F_X, r_F_Y, r_F_Z]);
-
-[coeffs_Ddr_Arm_Bottom(2, :), ~] = coeffs(ddr_Arm_Bottom(2), [r_F_X, r_F_Y, r_F_Z]);
-
-[coeffs_Ddr_Arm_Bottom(3, :), ~] = coeffs(ddr_Arm_Bottom(3), [r_F_X, r_F_Y, r_F_Z]);
-
-size(coeffs_Ddr_Arm_Bottom)
-
-job = createJob(c);
-createTask(job, @matlabFunction, 1,{...
-    coeffs_Ddr_Arm_Bottom(1,1), coeffs_Ddr_Arm_Bottom(1,2), coeffs_Ddr_Arm_Bottom(1,3), coeffs_Ddr_Arm_Bottom(1,4), ...
-    coeffs_Ddr_Arm_Bottom(2,1), coeffs_Ddr_Arm_Bottom(2,2), coeffs_Ddr_Arm_Bottom(2,3), coeffs_Ddr_Arm_Bottom(2,4), ...
-    coeffs_Ddr_Arm_Bottom(3,1), coeffs_Ddr_Arm_Bottom(3,2), coeffs_Ddr_Arm_Bottom(3,3), coeffs_Ddr_Arm_Bottom(3,4), ...
-    'file', 'FFD_Coeffs_Ddr_Arm_Bottom.m', 'outputs', ...
-    {...
-    'A11','A12','A13','A14',...
-    'A21','A22','A23','A24',...
-    'A31','A32','A33','A34',...
-    }});
-submit(job)
-job.Tasks
+% ddr_Arm_Bottom = diff(r_Arm_Bottom, t, t);
+% ddr_Arm_Bottom = subs(ddr_Arm_Bottom, syms_Replaced, syms_Replacing);
+% ddr_Arm_Bottom = subs(ddr_Arm_Bottom, variables, X');
+% 
+% [coeffs_Ddr_Arm_Bottom(1, :), ~] = coeffs(ddr_Arm_Bottom(1), [r_F_X, r_F_Y, r_F_Z]);
+% 
+% [coeffs_Ddr_Arm_Bottom(2, :), ~] = coeffs(ddr_Arm_Bottom(2), [r_F_X, r_F_Y, r_F_Z]);
+% 
+% [coeffs_Ddr_Arm_Bottom(3, :), ~] = coeffs(ddr_Arm_Bottom(3), [r_F_X, r_F_Y, r_F_Z]);
+% 
+% size(coeffs_Ddr_Arm_Bottom)
+% 
+% job = createJob(c);
+% createTask(job, @matlabFunction, 1,{...
+%     coeffs_Ddr_Arm_Bottom(1,1), coeffs_Ddr_Arm_Bottom(1,2), coeffs_Ddr_Arm_Bottom(1,3), coeffs_Ddr_Arm_Bottom(1,4), ...
+%     coeffs_Ddr_Arm_Bottom(2,1), coeffs_Ddr_Arm_Bottom(2,2), coeffs_Ddr_Arm_Bottom(2,3), coeffs_Ddr_Arm_Bottom(2,4), ...
+%     coeffs_Ddr_Arm_Bottom(3,1), coeffs_Ddr_Arm_Bottom(3,2), coeffs_Ddr_Arm_Bottom(3,3), coeffs_Ddr_Arm_Bottom(3,4), ...
+%     'file', 'FFD_Coeffs_Ddr_Arm_Bottom.m', 'outputs', ...
+%     {...
+%     'A11','A12','A13','A14',...
+%     'A21','A22','A23','A24',...
+%     'A31','A32','A33','A34',...
+%     }});
+% submit(job)
+% job.Tasks
 %}
 
 %% Half forward dynamics
-%{/
+%{
 variables = [ddr_Alpha_Hand, ddr_Beta_Hand];
 
 [A, B] = equationsToMatrix(equations, variables);

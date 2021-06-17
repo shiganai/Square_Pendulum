@@ -11,23 +11,30 @@ syms t real
 
 syms r_Alpha_Hand_Pre(t)
 syms r_Beta_Hand_Pre(t)
+syms r_Gamma_Hand_Pre(t)
 syms r_Alpha_Hand dr_Alpha_Hand ddr_Alpha_Hand real
 syms r_Beta_Hand dr_Beta_Hand ddr_Beta_Hand real
+syms r_Gamma_Hand dr_Gamma_Hand ddr_Gamma_Hand real
 syms r_Tau_Alpha_Shoulder real
 syms r_Tau_Beta_Shoulder real
+syms r_Tau_Gamma_Shoulder real
 
 syms_Replaced = [
     r_Alpha_Hand_Pre diff(r_Alpha_Hand_Pre, t) diff(r_Alpha_Hand_Pre, t, t), ...
     r_Beta_Hand_Pre diff(r_Beta_Hand_Pre, t) diff(r_Beta_Hand_Pre, t, t), ...
+    r_Gamma_Hand_Pre diff(r_Gamma_Hand_Pre, t) diff(r_Gamma_Hand_Pre, t, t), ...
     ];
 
 syms_Replacing = [
     r_Alpha_Hand dr_Alpha_Hand ddr_Alpha_Hand ...
     r_Beta_Hand dr_Beta_Hand ddr_Beta_Hand ...
+    r_Gamma_Hand dr_Gamma_Hand ddr_Gamma_Hand ...
     ];
 
 %% Rotate
 r_Rotate_Matrix = ...
+    [cos(r_Gamma_Hand_Pre), 0, sin(r_Gamma_Hand_Pre);0, 1, 0;-sin(r_Gamma_Hand_Pre), 0, cos(r_Gamma_Hand_Pre);]' ...
+    * ...
     [cos(r_Beta_Hand_Pre), -sin(r_Beta_Hand_Pre), 0; sin(r_Beta_Hand_Pre), cos(r_Beta_Hand_Pre), 0; 0, 0, 1;]' ...
     * ...
     [1, 0, 0; 0, cos(r_Alpha_Hand_Pre), -sin(r_Alpha_Hand_Pre); 0, sin(r_Alpha_Hand_Pre), cos(r_Alpha_Hand_Pre);]' ...
@@ -46,32 +53,40 @@ omega_Z = ohm_R(1,2);
 omega_R = simplify([omega_X; omega_Y; omega_Z]);
 
 omega_Tmp = simplify(subs(omega_R, syms_Replaced, syms_Replacing));
-unit_Vector_R = coeffs_Vector(omega_Tmp, [dr_Alpha_Hand, dr_Beta_Hand]);
-% unit_Vector_R = subs(unit_Vector_R, syms_Replacing, syms_Replaced);
+unit_Vector_R = coeffs_Vector(omega_Tmp, [dr_Alpha_Hand, dr_Beta_Hand, dr_Gamma_Hand]);
 
-r_Tau_Vec = r_Tau_Alpha_Shoulder * unit_Vector_R(:,1) + r_Tau_Beta_Shoulder * unit_Vector_R(:,2);
+r_Tau_Vec = r_Tau_Alpha_Shoulder * unit_Vector_R(:,1) ...
+    + r_Tau_Beta_Shoulder * unit_Vector_R(:,2) ...
+    + r_Tau_Gamma_Shoulder * unit_Vector_R(:,3);
 
 %% Start about l_Arm
 
 syms l_Alpha_Hand_Pre(t)
 syms l_Beta_Hand_Pre(t)
+syms l_Gamma_Hand_Pre(t)
 syms l_Alpha_Hand dl_Alpha_Hand ddl_Alpha_Hand real
 syms l_Beta_Hand dl_Beta_Hand ddl_Beta_Hand real
+syms l_Gamma_Hand dl_Gamma_Hand ddl_Gamma_Hand real
 syms l_Tau_Alpha_Shoulder real
 syms l_Tau_Beta_Shoulder real
+syms l_Tau_Gamma_Shoulder real
 
 syms_Replaced = [
     l_Alpha_Hand_Pre diff(l_Alpha_Hand_Pre, t) diff(l_Alpha_Hand_Pre, t, t), ...
     l_Beta_Hand_Pre diff(l_Beta_Hand_Pre, t) diff(l_Beta_Hand_Pre, t, t), ...
+    l_Gamma_Hand_Pre diff(l_Gamma_Hand_Pre, t) diff(l_Gamma_Hand_Pre, t, t), ...
     ];
 
 syms_Replacing = [
     l_Alpha_Hand dl_Alpha_Hand ddl_Alpha_Hand ...
     l_Beta_Hand dl_Beta_Hand ddl_Beta_Hand ...
+    l_Gamma_Hand dl_Gamma_Hand ddl_Gamma_Hand ...
     ];
 
 %% Rotate
 l_Rotate_Matrix = ...
+    [cos(-l_Gamma_Hand_Pre), 0, sin(-l_Gamma_Hand_Pre);0, 1, 0;-sin(-l_Gamma_Hand_Pre), 0, cos(-l_Gamma_Hand_Pre);]' ...
+    * ...
     [cos(-l_Beta_Hand_Pre), -sin(-l_Beta_Hand_Pre), 0; sin(-l_Beta_Hand_Pre), cos(-l_Beta_Hand_Pre), 0; 0, 0, 1;]' ...
     * ...
     [1, 0, 0; 0, cos(l_Alpha_Hand_Pre), -sin(l_Alpha_Hand_Pre); 0, sin(l_Alpha_Hand_Pre), cos(l_Alpha_Hand_Pre);]' ...
@@ -90,10 +105,11 @@ omega_Z = ohm(1,2);
 omega_L = simplify([omega_X; omega_Y; omega_Z]);
 
 omega_Tmp = simplify(subs(omega_L, syms_Replaced, syms_Replacing));
-unit_Vector_L = coeffs_Vector(omega_Tmp, [dl_Alpha_Hand, dl_Beta_Hand]);
-% unit_Vector_L = subs(unit_Vector_L, syms_Replacing, syms_Replaced);
+unit_Vector_L = coeffs_Vector(omega_Tmp, [dl_Alpha_Hand, dl_Beta_Hand, dl_Gamma_Hand]);
 
-l_Tau_Vec = l_Tau_Alpha_Shoulder * unit_Vector_L(:,1) + l_Tau_Beta_Shoulder * unit_Vector_L(:,2);
+l_Tau_Vec = l_Tau_Alpha_Shoulder * unit_Vector_L(:,1) ...
+    + l_Tau_Beta_Shoulder * unit_Vector_L(:,2) ...
+    + l_Tau_Gamma_Shoulder * unit_Vector_L(:,3);
 
 %% find external_Tau vector
 external_Tau_Vec = r_Tau_Vec + l_Tau_Vec;
@@ -302,13 +318,14 @@ tic
 X = inv(A)*B;
 toc
 
-% job = createJob(c);
-% createTask(job, @matlabFunction, 1,{X(1), X(2), X(3), X(4), X(5), X(6), ...
-%     'file', 'FFD_Dds_Body.m', 'outputs', ...
-%     {'ddalpha_Body', 'ddbeta_Body', 'ddgamma_Body', 'ddx_Head', 'ddy_Head', 'ddz_Head'}});
-% submit(job)
-% job.Tasks
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{X(1), X(2), X(3), X(4), X(5), X(6), ...
+    'file', 'FFD_Dds_Body.m', 'outputs', ...
+    {'ddalpha_Body', 'ddbeta_Body', 'ddgamma_Body', 'ddx_Head', 'ddy_Head', 'ddz_Head'}});
+submit(job)
+job.Tasks
 
+%{
 ddr_Shoulder = formula(diff(r_Shoulder, t, t))';
 ddr_Shoulder = subs(ddr_Shoulder, syms_Replaced, syms_Replacing);
 ddr_Shoulder = subs(ddr_Shoulder, variables, X');
@@ -419,11 +436,12 @@ createTask(job, @matlabFunction, 1,{...
 submit(job)
 job.Tasks
 %}
+%}
 
 %% Half forward dynamics
-%{
-equations = subs(equations, [l_Tau_Alpha_Shoulder, l_Tau_Beta_Shoulder], [r_Tau_Alpha_Shoulder, r_Tau_Beta_Shoulder]);
-variables = [ddalpha_Body, ddx_Head, ddy_Head, ddz_Head, r_Tau_Alpha_Shoulder, r_Tau_Beta_Shoulder];
+%{/
+equations = subs(equations, [l_Tau_Beta_Shoulder, l_Tau_Gamma_Shoulder, ], [r_Tau_Beta_Shoulder, r_Tau_Gamma_Shoulder, ]);
+variables = [ddalpha_Body, ddx_Head, ddy_Head, ddz_Head, r_Tau_Beta_Shoulder, r_Tau_Gamma_Shoulder];
 % variables = [ddalpha_Body, ddbeta_Body, ddgamma_Body, ddx_Head, ddy_Head, ddz_Head];
 
 [A, B] = equationsToMatrix(equations, variables);
@@ -436,7 +454,7 @@ toc
 job = createJob(c);
 createTask(job, @matlabFunction, 1,{X(1), X(2), X(3), X(4), X(5), X(6), ...
     'file', 'HFD_Dds_Body.m', 'outputs', ...
-    {'ddalpha_Body', 'ddx_Head', 'ddy_Head', 'ddz_Head', 'r_Tau_Alpha_Shoulder', 'r_Tau_Beta_Shoulder'}});
+    {'ddalpha_Body', 'ddx_Head', 'ddy_Head', 'ddz_Head', 'r_Tau_Beta_Shoulder', 'r_Tau_Gamma_Shoulder'}});
 submit(job)
 job.Tasks
 
@@ -719,24 +737,24 @@ job.Tasks
 
 %% Full Reverse dynamics
 %{
-% ddr_Shoulder = diff(r_Shoulder, t, t);
-% ddr_Shoulder = subs(ddr_Shoulder, syms_Replaced, syms_Replacing);
-% ddl_Shoulder = diff(l_Shoulder, t, t);
-% ddl_Shoulder = subs(ddl_Shoulder, syms_Replaced, syms_Replacing);
-% 
-% job = createJob(c);
-% createTask(job, @matlabFunction, 1,{ddr_Shoulder, ...
-%     'file', 'FRD_Ddr_Shoulder.m', 'outputs', ...
-%     {'ddr_Shoulder'}});
-% submit(job)
-% job.Tasks
-% 
-% job = createJob(c);
-% createTask(job, @matlabFunction, 1,{ddl_Shoulder, ...
-%     'file', 'FRD_Ddl_Shoulder.m', 'outputs', ...
-%     {'ddl_Shoulder'}});
-% submit(job)
-% job.Tasks
+ddr_Shoulder = diff(r_Shoulder, t, t);
+ddr_Shoulder = subs(ddr_Shoulder, syms_Replaced, syms_Replacing);
+ddl_Shoulder = diff(l_Shoulder, t, t);
+ddl_Shoulder = subs(ddl_Shoulder, syms_Replaced, syms_Replacing);
+
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{ddr_Shoulder, ...
+    'file', 'FRD_Ddr_Shoulder.m', 'outputs', ...
+    {'ddr_Shoulder'}});
+submit(job)
+job.Tasks
+
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{ddl_Shoulder, ...
+    'file', 'FRD_Ddl_Shoulder.m', 'outputs', ...
+    {'ddl_Shoulder'}});
+submit(job)
+job.Tasks
 
 dr_Shoulder = diff(r_Shoulder, t);
 dr_Shoulder = subs(dr_Shoulder, syms_Replaced, syms_Replacing);
@@ -757,39 +775,39 @@ createTask(job, @matlabFunction, 1,{dl_Shoulder, ...
 submit(job)
 job.Tasks
 
-% r_Shoulder = subs(r_Shoulder, syms_Replaced, syms_Replacing);
-% l_Shoulder = subs(l_Shoulder, syms_Replaced, syms_Replacing);
-% 
-% job = createJob(c);
-% createTask(job, @matlabFunction, 1,{l_Shoulder, ...
-%     'file', 'FRD_L_Shoulder.m', 'outputs', ...
-%     {'l_Shoulder'}});
-% submit(job)
-% job.Tasks
-% 
-% job = createJob(c);
-% createTask(job, @matlabFunction, 1,{r_Shoulder, ...
-%     'file', 'FRD_R_Shoulder.m', 'outputs', ...
-%     {'r_Shoulder'}});
-% submit(job)
-% job.Tasks
-% 
-% r_Hip = subs(r_Hip, syms_Replaced, syms_Replacing);
-% l_Hip = subs(l_Hip, syms_Replaced, syms_Replacing);
-% 
-% job = createJob(c);
-% createTask(job, @matlabFunction, 1,{l_Hip, ...
-%     'file', 'FRD_L_Hip.m', 'outputs', ...
-%     {'l_Hip'}});
-% submit(job)
-% job.Tasks
-% 
-% job = createJob(c);
-% createTask(job, @matlabFunction, 1,{r_Hip, ...
-%     'file', 'FRD_R_Hip.m', 'outputs', ...
-%     {'r_Hip'}});
-% submit(job)
-% job.Tasks
+r_Shoulder = subs(r_Shoulder, syms_Replaced, syms_Replacing);
+l_Shoulder = subs(l_Shoulder, syms_Replaced, syms_Replacing);
+
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{l_Shoulder, ...
+    'file', 'FRD_L_Shoulder.m', 'outputs', ...
+    {'l_Shoulder'}});
+submit(job)
+job.Tasks
+
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{r_Shoulder, ...
+    'file', 'FRD_R_Shoulder.m', 'outputs', ...
+    {'r_Shoulder'}});
+submit(job)
+job.Tasks
+
+r_Hip = subs(r_Hip, syms_Replaced, syms_Replacing);
+l_Hip = subs(l_Hip, syms_Replaced, syms_Replacing);
+
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{l_Hip, ...
+    'file', 'FRD_L_Hip.m', 'outputs', ...
+    {'l_Hip'}});
+submit(job)
+job.Tasks
+
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{r_Hip, ...
+    'file', 'FRD_R_Hip.m', 'outputs', ...
+    {'r_Hip'}});
+submit(job)
+job.Tasks
 %}
 
 

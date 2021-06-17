@@ -95,14 +95,14 @@ l_Tau_Alpha_Shoulder = -0.;
 r_Tau_Beta_Shoulder = -0.;
 l_Tau_Beta_Shoulder = -0.;
 
-tic
-[A11,A12,A13,A14,A15,A16,A17,A21,A22,A23,A24,A25,A26,A27,A31,A32,A33,A34,A35,A36,A37] = FFD_Coeffs_Ddr_Shoulder(alpha_Body,beta_Body,dalpha_Body,dbeta_Body,depth_Body,dgamma_Body,g,gamma_Body,height_Body,l_Alpha_Hand,l_Tau_Beta_Shoulder,l_Tau_Alpha_Shoulder,m_Body,r_Alpha_Hand,r_Tau_Beta_Shoulder,r_Tau_Alpha_Shoulder,width_Body);
-coeffs_Ddr_Shoulder = [
-    A11,A12,A13,A14,A15,A16,A17,;
-    A21,A22,A23,A24,A25,A26,A27,;
-    A31,A32,A33,A34,A35,A36,A37
-    ];
-toc
+% tic
+% [A11,A12,A13,A14,A15,A16,A17,A21,A22,A23,A24,A25,A26,A27,A31,A32,A33,A34,A35,A36,A37] = FFD_Coeffs_Ddr_Shoulder(alpha_Body,beta_Body,dalpha_Body,dbeta_Body,depth_Body,dgamma_Body,g,gamma_Body,height_Body,l_Alpha_Hand,l_Tau_Beta_Shoulder,l_Tau_Alpha_Shoulder,m_Body,r_Alpha_Hand,r_Tau_Beta_Shoulder,r_Tau_Alpha_Shoulder,width_Body);
+% coeffs_Ddr_Shoulder = [
+%     A11,A12,A13,A14,A15,A16,A17,;
+%     A21,A22,A23,A24,A25,A26,A27,;
+%     A31,A32,A33,A34,A35,A36,A37
+%     ];
+% toc
 
 % [A11,A12,A13,A14,A15,A16,A17,A21,A22,A23,A24,A25,A26,A27,A31,A32,A33,A34,A35,A36,A37] = FFD_Coeffs_Ddl_Shoulder(alpha_Body,beta_Body,dalpha_Body,dbeta_Body,depth_Body,dgamma_Body,g,gamma_Body,height_Body,l_Alpha_Hand,l_Tau_Beta_Shoulder,l_Tau_Alpha_Shoulder,m_Body,r_Alpha_Hand,r_Tau_Beta_Shoulder,r_Tau_Alpha_Shoulder,width_Body);
 % coeffs_Ddl_Shoulder = [
