@@ -20,7 +20,7 @@ public class scroll_Control : MonoBehaviour
 
     public void OnValueCahged()
     {
-        Debug.Log(scrollbar.value);
+        //Debug.Log(scrollbar.value);
     }
 
     public float GetValue()
