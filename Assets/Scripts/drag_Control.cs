@@ -29,7 +29,7 @@ public class drag_Control : MonoBehaviour
         transform.position = new Vector3((left_Limit + right_Limit) / 2, (bottom_Limit + top_Limit) / 2, 0);
 
 
-        var test = new Matrix(2, 2);
+        var test = new matrix(2, 2);
 
 		//float target_Deg = 10;
 		//test[0][0] = Mathf.Cos(target_Deg * Mathf.Deg2Rad);
@@ -41,10 +41,10 @@ public class drag_Control : MonoBehaviour
 		test[0,1] = 0;
 		test[1,1] = 1;
 
-		var test_Inverted = Matrix.MatrixInverse(test);
+		var test_Inverted = matrix.Inverse(test);
 
-		Debug.Log(Matrix.MatrixAsString(test));
-		Debug.Log(Matrix.MatrixAsString(test_Inverted));
+		Debug.Log(matrix.asString(test));
+		Debug.Log(matrix.asString(test_Inverted));
 	}
     public void MyPointerDownUI()
 	{

@@ -79,7 +79,7 @@ public class matrix
         }
     }
 
-    public static string matrixAsString(matrix target_matrix)
+    public static string asString(matrix target_matrix)
     {
         float[][] matrix = target_matrix.data_Jagg;
         string s = "";
@@ -129,14 +129,14 @@ public class matrix
         }
         return x;
     }
-    public static matrix matrixInverse(matrix target_matrix)
+    public static matrix Inverse(matrix target_matrix)
     {
         float[][] matrix = target_matrix.data_Jagg;
         int n = matrix.Length;
-        matrix result = matrixDuplicate(matrix);
+        matrix result = duplicate(matrix);
         int[] perm;
         int toggle;
-        float[][] lum = matrixDecompose(matrix, out perm, out toggle);
+        float[][] lum = decompose(matrix, out perm, out toggle);
         if (lum == null)
             throw new Exception("Unable to compute inverse");
         float[] b = new float[n];
@@ -156,12 +156,12 @@ public class matrix
 
         return result;
     }
-    public static float[][] matrixDecompose(float[][] matrix, out int[] perm, out int toggle)
+    public static float[][] decompose(float[][] matrix, out int[] perm, out int toggle)
     {
         // Doolittle LUP decomposition.
         // assumes matrix is square.
         int n = matrix.Length; // convenience
-        float[][] result = matrixDuplicate(matrix).data_Jagg;
+        float[][] result = duplicate(matrix).data_Jagg;
         perm = new int[n];
         for (int i = 0; i < n; ++i) { perm[i] = i; }
         toggle = 1;
@@ -198,7 +198,7 @@ public class matrix
         } // main j column loop
         return result;
     }
-    public static matrix matrixDuplicate(float[][] matrix)
+    public static matrix duplicate(float[][] matrix)
     {
 
         // assumes matrix is not null.
@@ -329,7 +329,7 @@ public class matrix
         return result;
     }
 
-    public static matrix matrixTranspose(matrix a)
+    public static matrix transpose(matrix a)
     {
         int row_Num = a.rows;
         int col_Num = a.cols;
@@ -347,7 +347,7 @@ public class matrix
 
     }
 
-    public static matrix matrixDockRows(matrix a, matrix b)
+    public static matrix dockRows(matrix a, matrix b)
     {
         int row_Num = a.rows + b.rows;
         int col_Num = a.cols;
@@ -374,7 +374,7 @@ public class matrix
         return result;
     }
 
-    public static matrix matrixTrim(matrix target,int row_Start, int row_Num, int col_Start, int col_Num)
+    public static matrix trim(matrix target,int row_Start, int row_Num, int col_Start, int col_Num)
     {
 
         var result = new matrix(row_Num, col_Num);
@@ -389,12 +389,12 @@ public class matrix
         return result;
     }
 
-    public static Vector3 convert_matrix_To_Vector3(matrix target)
+    public static Vector3 convert_Matrix_To_Vector3(matrix target)
     {
         return new Vector3(target[0, 0], target[2, 0], target[1, 0]);
     }
 
-    public static matrix convert_Vector3_To_matrix(Vector3 target)
+    public static matrix convert_Vector3_To_Matrix(Vector3 target)
     {
         return new matrix(new float[][] {
             new float[]{target.x },
@@ -402,4 +402,5 @@ public class matrix
             new float[]{target.z }
         });
     }
+
 }

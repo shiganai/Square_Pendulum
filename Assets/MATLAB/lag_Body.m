@@ -421,7 +421,7 @@ job.Tasks
 %}
 
 %% Half forward dynamics
-%{/
+%{
 equations = subs(equations, [l_Tau_Alpha_Shoulder, l_Tau_Beta_Shoulder], [r_Tau_Alpha_Shoulder, r_Tau_Beta_Shoulder]);
 variables = [ddalpha_Body, ddx_Head, ddy_Head, ddz_Head, r_Tau_Alpha_Shoulder, r_Tau_Beta_Shoulder];
 % variables = [ddalpha_Body, ddbeta_Body, ddgamma_Body, ddx_Head, ddy_Head, ddz_Head];
@@ -716,60 +716,80 @@ submit(job)
 job.Tasks
 %}
 %}
+
 %% Full Reverse dynamics
 %{
-ddr_Shoulder = diff(r_Shoulder, t, t);
-ddr_Shoulder = subs(ddr_Shoulder, syms_Replaced, syms_Replacing);
-ddl_Shoulder = diff(l_Shoulder, t, t);
-ddl_Shoulder = subs(ddl_Shoulder, syms_Replaced, syms_Replacing);
+% ddr_Shoulder = diff(r_Shoulder, t, t);
+% ddr_Shoulder = subs(ddr_Shoulder, syms_Replaced, syms_Replacing);
+% ddl_Shoulder = diff(l_Shoulder, t, t);
+% ddl_Shoulder = subs(ddl_Shoulder, syms_Replaced, syms_Replacing);
+% 
+% job = createJob(c);
+% createTask(job, @matlabFunction, 1,{ddr_Shoulder, ...
+%     'file', 'FRD_Ddr_Shoulder.m', 'outputs', ...
+%     {'ddr_Shoulder'}});
+% submit(job)
+% job.Tasks
+% 
+% job = createJob(c);
+% createTask(job, @matlabFunction, 1,{ddl_Shoulder, ...
+%     'file', 'FRD_Ddl_Shoulder.m', 'outputs', ...
+%     {'ddl_Shoulder'}});
+% submit(job)
+% job.Tasks
+
+dr_Shoulder = diff(r_Shoulder, t);
+dr_Shoulder = subs(dr_Shoulder, syms_Replaced, syms_Replacing);
+dl_Shoulder = diff(l_Shoulder, t);
+dl_Shoulder = subs(dl_Shoulder, syms_Replaced, syms_Replacing);
 
 job = createJob(c);
-createTask(job, @matlabFunction, 1,{ddr_Shoulder, ...
-    'file', 'FRD_Ddr_Shoulder.m', 'outputs', ...
-    {'ddr_Shoulder'}});
+createTask(job, @matlabFunction, 1,{dr_Shoulder, ...
+    'file', 'FRD_Dr_Shoulder.m', 'outputs', ...
+    {'dr_Shoulder'}});
 submit(job)
 job.Tasks
 
 job = createJob(c);
-createTask(job, @matlabFunction, 1,{ddl_Shoulder, ...
-    'file', 'FRD_Ddl_Shoulder.m', 'outputs', ...
-    {'ddl_Shoulder'}});
+createTask(job, @matlabFunction, 1,{dl_Shoulder, ...
+    'file', 'FRD_Dl_Shoulder.m', 'outputs', ...
+    {'dl_Shoulder'}});
 submit(job)
 job.Tasks
 
-r_Shoulder = subs(r_Shoulder, syms_Replaced, syms_Replacing);
-l_Shoulder = subs(l_Shoulder, syms_Replaced, syms_Replacing);
-
-job = createJob(c);
-createTask(job, @matlabFunction, 1,{l_Shoulder, ...
-    'file', 'FRD_L_Shoulder.m', 'outputs', ...
-    {'l_Shoulder'}});
-submit(job)
-job.Tasks
-
-job = createJob(c);
-createTask(job, @matlabFunction, 1,{r_Shoulder, ...
-    'file', 'FRD_R_Shoulder.m', 'outputs', ...
-    {'r_Shoulder'}});
-submit(job)
-job.Tasks
-
-r_Hip = subs(r_Hip, syms_Replaced, syms_Replacing);
-l_Hip = subs(l_Hip, syms_Replaced, syms_Replacing);
-
-job = createJob(c);
-createTask(job, @matlabFunction, 1,{l_Hip, ...
-    'file', 'FRD_L_Hip.m', 'outputs', ...
-    {'l_Hip'}});
-submit(job)
-job.Tasks
-
-job = createJob(c);
-createTask(job, @matlabFunction, 1,{r_Hip, ...
-    'file', 'FRD_R_Hip.m', 'outputs', ...
-    {'r_Hip'}});
-submit(job)
-job.Tasks
+% r_Shoulder = subs(r_Shoulder, syms_Replaced, syms_Replacing);
+% l_Shoulder = subs(l_Shoulder, syms_Replaced, syms_Replacing);
+% 
+% job = createJob(c);
+% createTask(job, @matlabFunction, 1,{l_Shoulder, ...
+%     'file', 'FRD_L_Shoulder.m', 'outputs', ...
+%     {'l_Shoulder'}});
+% submit(job)
+% job.Tasks
+% 
+% job = createJob(c);
+% createTask(job, @matlabFunction, 1,{r_Shoulder, ...
+%     'file', 'FRD_R_Shoulder.m', 'outputs', ...
+%     {'r_Shoulder'}});
+% submit(job)
+% job.Tasks
+% 
+% r_Hip = subs(r_Hip, syms_Replaced, syms_Replacing);
+% l_Hip = subs(l_Hip, syms_Replaced, syms_Replacing);
+% 
+% job = createJob(c);
+% createTask(job, @matlabFunction, 1,{l_Hip, ...
+%     'file', 'FRD_L_Hip.m', 'outputs', ...
+%     {'l_Hip'}});
+% submit(job)
+% job.Tasks
+% 
+% job = createJob(c);
+% createTask(job, @matlabFunction, 1,{r_Hip, ...
+%     'file', 'FRD_R_Hip.m', 'outputs', ...
+%     {'r_Hip'}});
+% submit(job)
+% job.Tasks
 %}
 
 
