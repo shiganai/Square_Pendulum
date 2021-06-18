@@ -122,6 +122,9 @@ syms g real
 syms r_F_X r_F_Y r_F_Z real
 syms l_F_X l_F_Y l_F_Z real
 
+syms tau_Beta_Body real
+syms tau_Gamma_Body real
+
 syms alpha_Body_Pre(t)
 syms beta_Body_Pre(t)
 syms gamma_Body_Pre(t)
@@ -297,16 +300,16 @@ coeffs_Tau_Beta_Body = coeffs_Tau_Body(2);
 coeffs_Tau_Gamma_Body = coeffs_Tau_Body(3);
 
 %%
-equations = [
-    -functionalDerivative(L, alpha_Body_Pre) == coeffs_Tau_Alpha_Body + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, alpha_Body_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, alpha_Body_Pre)');
-    -functionalDerivative(L, beta_Body_Pre) == coeffs_Tau_Beta_Body + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, beta_Body_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, beta_Body_Pre)');
-    -functionalDerivative(L, gamma_Body_Pre) == coeffs_Tau_Gamma_Body + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, gamma_Body_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, gamma_Body_Pre)');
-    -functionalDerivative(L, x_Head_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, x_Head_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, x_Head_Pre)');
-    -functionalDerivative(L, y_Head_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, y_Head_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, y_Head_Pre)');
-    -functionalDerivative(L, z_Head_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, z_Head_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, z_Head_Pre)');
-    ];
-
-equations = subs(equations, syms_Replaced, syms_Replacing);
+% equations = [
+%     -functionalDerivative(L, alpha_Body_Pre) == coeffs_Tau_Alpha_Body + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, alpha_Body_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, alpha_Body_Pre)');
+%     -functionalDerivative(L, beta_Body_Pre) == tau_Beta_Body + coeffs_Tau_Beta_Body + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, beta_Body_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, beta_Body_Pre)');
+%     -functionalDerivative(L, gamma_Body_Pre) == tau_Gamma_Body + coeffs_Tau_Gamma_Body + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, gamma_Body_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, gamma_Body_Pre)');
+%     -functionalDerivative(L, x_Head_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, x_Head_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, x_Head_Pre)');
+%     -functionalDerivative(L, y_Head_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, y_Head_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, y_Head_Pre)');
+%     -functionalDerivative(L, z_Head_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, z_Head_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, z_Head_Pre)');
+%     ];
+% 
+% equations = subs(equations, syms_Replaced, syms_Replacing);
 
 %% Full forward dynamics
 %{
@@ -439,12 +442,10 @@ job.Tasks
 %}
 
 %% Half forward dynamics
-%{/
-equations = subs(equations, [l_Tau_Beta_Shoulder, l_Tau_Gamma_Shoulder, ], [r_Tau_Beta_Shoulder, r_Tau_Gamma_Shoulder, ]);
-variables = [ddalpha_Body, ddx_Head, ddy_Head, ddz_Head, r_Tau_Beta_Shoulder, r_Tau_Gamma_Shoulder];
-% variables = [ddalpha_Body, ddbeta_Body, ddgamma_Body, ddx_Head, ddy_Head, ddz_Head];
-
-[A, B] = equationsToMatrix(equations, variables);
+%{
+variables = [ddalpha_Body, ddx_Head, ddy_Head, ddz_Head, tau_Beta_Body, r_Tau_Beta_Shoulder];
+equations_Tmp = subs(equations, [l_Tau_Beta_Shoulder, ], [r_Tau_Beta_Shoulder, ]);
+[A, B] = equationsToMatrix(equations_Tmp, variables);
 toc
 simplify(det(A))
 tic
@@ -453,8 +454,8 @@ toc
 
 job = createJob(c);
 createTask(job, @matlabFunction, 1,{X(1), X(2), X(3), X(4), X(5), X(6), ...
-    'file', 'HFD_Dds_Body.m', 'outputs', ...
-    {'ddalpha_Body', 'ddx_Head', 'ddy_Head', 'ddz_Head', 'r_Tau_Beta_Shoulder', 'r_Tau_Gamma_Shoulder'}});
+    'file', 'HFD_Dds_Body_Beta_Gamma.m', 'outputs', ...
+    {'ddalpha_Body', 'ddx_Head', 'ddy_Head', 'ddz_Head', 'tau_Beta_Body', 'r_Tau_Beta_Shoulder'}});
 submit(job)
 job.Tasks
 
@@ -733,7 +734,52 @@ createTask(job, @matlabFunction, 1,{...
 submit(job)
 job.Tasks
 %}
+
+variables = [ddalpha_Body, ddx_Head, ddy_Head, ddz_Head, tau_Beta_Body, tau_Gamma_Body];
+[A, B] = equationsToMatrix(equations, variables);
+toc
+simplify(det(A))
+tic
+X = inv(A)*B;
+toc
+
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{X(1), X(2), X(3), X(4), X(5), X(6), ...
+    'file', 'HFD_Dds_Body_Beta_Gamma_External.m', 'outputs', ...
+    {'ddalpha_Body', 'ddx_Head', 'ddy_Head', 'ddz_Head', 'tau_Beta_Body', 'tau_Gamma_Body'}});
+submit(job)
+job.Tasks
+
 %}
+
+%% Half forward dynamics 2nd
+
+equations_Tmp = [
+    -functionalDerivative(L, alpha_Body_Pre) == coeffs_Tau_Alpha_Body + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, alpha_Body_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, alpha_Body_Pre)');
+    -functionalDerivative(L, x_Head_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, x_Head_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, x_Head_Pre)');
+    -functionalDerivative(L, y_Head_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, y_Head_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, y_Head_Pre)');
+    -functionalDerivative(L, z_Head_Pre) == 0 + ([l_F_X, l_F_Y, l_F_Z] * diff(l_Shoulder, z_Head_Pre)') + ([r_F_X, r_F_Y, r_F_Z] * diff(r_Shoulder, z_Head_Pre)');
+    ];
+
+equations_Tmp = subs(equations_Tmp, [beta_Body_Pre, gamma_Body_Pre, ], [sym(0), sym(0),]);
+equations_Tmp = subs(equations_Tmp, syms_Replaced, syms_Replacing);
+
+equations_Tmp = subs(equations_Tmp, [l_Tau_Alpha_Shoulder, ], [r_Tau_Alpha_Shoulder, ]);
+variables = [ddx_Head, ddy_Head, ddz_Head, r_Tau_Alpha_Shoulder];
+
+[A, B] = equationsToMatrix(equations_Tmp, variables);
+toc
+simplify(det(A))
+tic
+X = inv(A)*B;
+toc
+
+job = createJob(c);
+createTask(job, @matlabFunction, 1,{X(1), X(2), X(3), X(4), ...
+    'file', 'HFD_Dds_Body_Alpha.m', 'outputs', ...
+    {'ddx_Head', 'ddy_Head', 'ddz_Head', 'r_Tau_Alpha_Shoulder'}});
+submit(job)
+job.Tasks
 
 %% Full Reverse dynamics
 %{

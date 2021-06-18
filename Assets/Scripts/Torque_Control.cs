@@ -47,6 +47,21 @@ public class Torque_Control : MonoBehaviour
     private float dl_Beta_Hand;
     private float dl_Gamma_Hand;
 
+    private float ddalpha_Body;
+    private float ddbeta_Body;
+    private float ddgamma_Body;
+    private float ddx_Head;
+    private float ddy_Head;
+    private float ddz_Head;
+
+    public float ddr_Alpha_Hand;
+    private float ddr_Beta_Hand;
+    private float ddr_Gamma_Hand;
+
+    private float ddl_Alpha_Hand;
+    private float ddl_Beta_Hand;
+    private float ddl_Gamma_Hand;
+
     private float r_X_Fixed, r_Y_Fixed, r_Z_Fixed;
     private float l_X_Fixed, l_Y_Fixed, l_Z_Fixed;
 
@@ -68,8 +83,11 @@ public class Torque_Control : MonoBehaviour
     public float r_Tau_Beta_Shoulder, l_Tau_Beta_Shoulder;
     public float r_Tau_Gamma_Shoulder, l_Tau_Gamma_Shoulder;
 
+    public float beta_Speed_Zero = 1e0f;
+    public float gamma_Speed_Zero = 1e0f;
+
     public bool is_Playing;
-    public bool isHFD, isFFD;
+    public bool isHFD;
 
     public float velocity_Zero;
 
@@ -183,20 +201,127 @@ public class Torque_Control : MonoBehaviour
         {
             find_F_Spring();
 
-            calc_FFD();
+            //calc_FFD();
             //calc_HFD();
 
-            //if (isFFD)
-            //{
-            //    isHFD = false;
-            //    calc_FFD();
-            //}
             //if (isHFD)
             //{
-            //    isFFD = false;
             //    calc_HFD();
             //}
+            //else
+            //{
+            //    calc_FFD();
+            //}
 
+            //ddalpha_Body = -2 * (dalpha_Body) - (alpha_Body + 90f * Mathf.Deg2Rad);
+            //var dds_Body_Tau_Alpha = HFD_Alpha.HFD_Dds_Body_Alpha(alpha_Body, dalpha_Body, ddalpha_Body, depth_Body, g, height_Body, l_Beta_Hand, l_F_X, l_F_Y, l_F_Z, l_Tau_Gamma_Shoulder, m_Body, r_Beta_Hand, r_F_X, r_F_Y, r_F_Z, r_Tau_Gamma_Shoulder);
+
+            //var r_Tau_Alpha_Base = dds_Body_Tau_Alpha[3];
+            //r_Tau_Alpha_Shoulder = r_Tau_Alpha_Base;
+
+            //if (slider.GetValue() < 0)
+            //{
+            //    if (torque_Body_R_Max > r_Tau_Alpha_Base)
+            //    {
+            //        r_Tau_Alpha_Shoulder = r_Tau_Alpha_Base + (torque_Body_R_Max - r_Tau_Alpha_Base) * slider.GetValue();
+            //    }
+            //    else
+            //    {
+            //        r_Tau_Alpha_Shoulder = r_Tau_Alpha_Base;
+            //    }
+
+            //}
+            //else
+            //{
+            //    if (-torque_Body_R_Max < r_Tau_Alpha_Base)
+            //    {
+            //        r_Tau_Alpha_Shoulder = r_Tau_Alpha_Base + (r_Tau_Alpha_Base - torque_Body_R_Max) * -slider.GetValue();
+            //    }
+            //    else
+            //    {
+            //        r_Tau_Alpha_Shoulder = r_Tau_Alpha_Base;
+            //    }
+            //}
+
+            r_Tau_Alpha_Shoulder = slider.GetValue() * torque_Body_R_Max;
+            l_Tau_Alpha_Shoulder = r_Tau_Alpha_Shoulder;
+
+            if (scroll.GetValue() == 0)
+            {
+                //Debug.Log("isHFD");
+                ddbeta_Body = -2 * beta_Speed_Zero * dbeta_Body - beta_Speed_Zero * beta_Speed_Zero * beta_Body;
+                ddgamma_Body = -2 * gamma_Speed_Zero * dgamma_Body - gamma_Speed_Zero * gamma_Speed_Zero * gamma_Body;
+
+                var dds_Body = HFD_Beta_Gamma_External.HFD_Dds_Body_Beta_Gamma_External(alpha_Body, beta_Body, dalpha_Body, dbeta_Body, ddbeta_Body, ddgamma_Body, depth_Body, dgamma_Body, g, gamma_Body, height_Body, l_Alpha_Hand, l_Beta_Hand, l_F_X, l_F_Y, l_F_Z, l_Tau_Beta_Shoulder, l_Tau_Gamma_Shoulder, l_Tau_Alpha_Shoulder, m_Body, r_Alpha_Hand, r_Beta_Hand, r_F_X, r_F_Y, r_F_Z, r_Tau_Beta_Shoulder, r_Tau_Gamma_Shoulder, r_Tau_Alpha_Shoulder, width_Body);
+                //var dds_Body = HFD_Beta_Gamma.HFD_Dds_Body_Beta_Gamma(alpha_Body, beta_Body, dalpha_Body, dbeta_Body, ddbeta_Body, ddgamma_Body, depth_Body, dgamma_Body, g, gamma_Body, height_Body, l_Alpha_Hand, l_Beta_Hand, l_F_X, l_F_Y, l_F_Z, l_Tau_Gamma_Shoulder, l_Tau_Alpha_Shoulder, m_Body, r_Alpha_Hand, r_Beta_Hand, r_F_X, r_F_Y, r_F_Z, r_Tau_Gamma_Shoulder, r_Tau_Alpha_Shoulder, width_Body);
+                //var dds_Body = HFD_Beta.HFD_Dds_Body(alpha_Body, beta_Body, dalpha_Body, dbeta_Body, ddbeta_Body, depth_Body, dgamma_Body, g, gamma_Body, height_Body, l_Alpha_Hand, l_Beta_Hand, l_F_X, l_F_Y, l_F_Z, l_Tau_Beta_Shoulder, l_Tau_Gamma_Shoulder, l_Tau_Alpha_Shoulder, m_Body, r_Alpha_Hand, r_Beta_Hand, r_F_X, r_F_Y, r_F_Z, r_Tau_Beta_Shoulder, r_Tau_Gamma_Shoulder, r_Tau_Alpha_Shoulder, width_Body);
+
+
+                ddalpha_Body = dds_Body[0];
+                ddx_Head = dds_Body[1];
+                ddy_Head = dds_Body[2];
+                ddz_Head = dds_Body[3];
+
+                //r_Tau_Beta_Shoulder = dds_Body[5];
+                //l_Tau_Beta_Shoulder = r_Tau_Beta_Shoulder;
+
+                var dds_R_Hand = FFD_Arm_R.FFD_Dds_Arm_R(dr_Beta_Hand, dr_Gamma_Hand, dr_Alpha_Hand, g, length_Hand, m_Hand, r_Alpha_Hand, r_Beta_Hand, r_F_X, r_F_Y, r_F_Z, r_Gamma_Hand, r_Tau_Beta_Shoulder, r_Tau_Gamma_Shoulder, r_Tau_Alpha_Shoulder, radius_Hand);
+                var dds_L_Hand = FFD_Arm_L.FFD_Dds_Arm_L(dl_Beta_Hand, dl_Gamma_Hand, dl_Alpha_Hand, g, l_Alpha_Hand, l_Beta_Hand, l_F_X, l_F_Y, l_F_Z, l_Gamma_Hand, l_Tau_Beta_Shoulder, l_Tau_Gamma_Shoulder, l_Tau_Alpha_Shoulder, length_Hand, m_Hand, radius_Hand);
+
+                ddr_Alpha_Hand = dds_R_Hand[0];
+                ddr_Beta_Hand = dds_R_Hand[1];
+
+                ddl_Alpha_Hand = dds_L_Hand[0];
+                ddl_Beta_Hand = dds_L_Hand[1];
+            }
+            else
+            {
+                r_Tau_Alpha_Shoulder += scroll.GetValue() * torque_Body_L_Max;
+                l_Tau_Alpha_Shoulder -= scroll.GetValue() * torque_Body_L_Max;
+
+                var dds_R_Hand = FFD_Arm_R.FFD_Dds_Arm_R(dr_Beta_Hand, dr_Gamma_Hand, dr_Alpha_Hand, g, length_Hand, m_Hand, r_Alpha_Hand, r_Beta_Hand, r_F_X, r_F_Y, r_F_Z, r_Gamma_Hand, r_Tau_Beta_Shoulder, r_Tau_Gamma_Shoulder, r_Tau_Alpha_Shoulder, radius_Hand);
+                var dds_L_Hand = FFD_Arm_L.FFD_Dds_Arm_L(dl_Beta_Hand, dl_Gamma_Hand, dl_Alpha_Hand, g, l_Alpha_Hand, l_Beta_Hand, l_F_X, l_F_Y, l_F_Z, l_Gamma_Hand, l_Tau_Beta_Shoulder, l_Tau_Gamma_Shoulder, l_Tau_Alpha_Shoulder, length_Hand, m_Hand, radius_Hand);
+                var dds_Body = FFD_Body.FFD_Dds_Body(alpha_Body, beta_Body, dalpha_Body, dbeta_Body, depth_Body, dgamma_Body, g, gamma_Body, height_Body, l_Alpha_Hand, l_Beta_Hand, l_F_X, l_F_Y, l_F_Z, l_Tau_Beta_Shoulder, l_Tau_Gamma_Shoulder, l_Tau_Alpha_Shoulder, m_Body, r_Alpha_Hand, r_Beta_Hand, r_F_X, r_F_Y, r_F_Z, r_Tau_Beta_Shoulder, r_Tau_Gamma_Shoulder, r_Tau_Alpha_Shoulder, width_Body);
+
+                ddalpha_Body = dds_Body[0];
+                ddbeta_Body = dds_Body[1];
+                ddgamma_Body = dds_Body[2];
+                ddx_Head = dds_Body[3];
+                ddy_Head = dds_Body[4];
+                ddz_Head = dds_Body[5];
+
+                ddr_Alpha_Hand = dds_R_Hand[0];
+                ddr_Beta_Hand = dds_R_Hand[1];
+
+                ddl_Alpha_Hand = dds_L_Hand[0];
+                ddl_Beta_Hand = dds_L_Hand[1];
+            }
+
+
+            r_Alpha_Hand += dr_Alpha_Hand * Time.fixedDeltaTime;
+            r_Beta_Hand += dr_Beta_Hand * Time.fixedDeltaTime;
+            l_Alpha_Hand += dl_Alpha_Hand * Time.fixedDeltaTime;
+            l_Beta_Hand += dl_Beta_Hand * Time.fixedDeltaTime;
+
+            alpha_Body += dalpha_Body * Time.fixedDeltaTime;
+            beta_Body += dbeta_Body * Time.fixedDeltaTime;
+            gamma_Body += dgamma_Body * Time.fixedDeltaTime;
+            x_Head += dx_Head * Time.fixedDeltaTime;
+            y_Head += dy_Head * Time.fixedDeltaTime;
+            z_Head += dz_Head * Time.fixedDeltaTime;
+
+
+            dr_Alpha_Hand += ddr_Alpha_Hand * Time.fixedDeltaTime;
+            dr_Beta_Hand += ddr_Beta_Hand * Time.fixedDeltaTime;
+            dl_Alpha_Hand += ddl_Alpha_Hand * Time.fixedDeltaTime;
+            dl_Beta_Hand += ddl_Beta_Hand * Time.fixedDeltaTime;
+
+            dalpha_Body += ddalpha_Body * Time.fixedDeltaTime;
+            dbeta_Body += ddbeta_Body * Time.fixedDeltaTime;
+            dgamma_Body += ddgamma_Body * Time.fixedDeltaTime;
+            dx_Head += ddx_Head * Time.fixedDeltaTime;
+            dy_Head += ddy_Head * Time.fixedDeltaTime;
+            dz_Head += ddz_Head * Time.fixedDeltaTime;
         }
 
         if (toReset)
@@ -377,19 +502,15 @@ public class Torque_Control : MonoBehaviour
 
     void calc_HFD()
     {
-        var ddbeta_Body = 0.1f;
-        var ddgamma_Body = 0f;
+        var ddbeta_Body = (-2 * dbeta_Body - beta_Body) * beta_Speed_Zero;
 
-        var dds_Body = HFD.HFD_Dds_Body(alpha_Body, beta_Body, dalpha_Body, dbeta_Body, ddbeta_Body, ddgamma_Body, depth_Body, dgamma_Body, g, gamma_Body, height_Body, l_Alpha_Hand, l_Beta_Hand, l_F_X, l_F_Y, l_F_Z, l_Tau_Alpha_Shoulder, m_Body, r_Alpha_Hand, r_Beta_Hand, r_F_X, r_F_Y, r_F_Z, r_Tau_Alpha_Shoulder, width_Body);
+        var dds_Body = HFD_Beta.HFD_Dds_Body(alpha_Body, beta_Body, dalpha_Body, dbeta_Body, ddbeta_Body, depth_Body, dgamma_Body, g, gamma_Body, height_Body, l_Alpha_Hand, l_Beta_Hand, l_F_X, l_F_Y, l_F_Z, l_Tau_Beta_Shoulder, l_Tau_Gamma_Shoulder, l_Tau_Alpha_Shoulder, m_Body, r_Alpha_Hand, r_Beta_Hand, r_F_X, r_F_Y, r_F_Z, r_Tau_Beta_Shoulder, r_Tau_Gamma_Shoulder, r_Tau_Alpha_Shoulder, width_Body);
 
         var ddalpha_Body = dds_Body[0];
-        var ddx_Head = dds_Body[1];
-        var ddy_Head = dds_Body[2];
-        var ddz_Head = dds_Body[3];
-
-        r_Tau_Alpha_Shoulder = 0;
-        r_Tau_Beta_Shoulder = dds_Body[4];
-        r_Tau_Gamma_Shoulder = dds_Body[5];
+        var ddgamma_Body = dds_Body[1];
+        var ddx_Head = dds_Body[2];
+        var ddy_Head = dds_Body[3];
+        var ddz_Head = dds_Body[4];
 
         var dds_R_Hand = FFD_Arm_R.FFD_Dds_Arm_R(dr_Beta_Hand, dr_Gamma_Hand, dr_Alpha_Hand, g, length_Hand, m_Hand, r_Alpha_Hand, r_Beta_Hand, r_F_X, r_F_Y, r_F_Z, r_Gamma_Hand, r_Tau_Beta_Shoulder, r_Tau_Gamma_Shoulder, r_Tau_Alpha_Shoulder, radius_Hand);
         var dds_L_Hand = FFD_Arm_L.FFD_Dds_Arm_L(dl_Beta_Hand, dl_Gamma_Hand, dl_Alpha_Hand, g, l_Alpha_Hand, l_Beta_Hand, l_F_X, l_F_Y, l_F_Z, l_Gamma_Hand, l_Tau_Beta_Shoulder, l_Tau_Gamma_Shoulder, l_Tau_Alpha_Shoulder, length_Hand, m_Hand, radius_Hand);

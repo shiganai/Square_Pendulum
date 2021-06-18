@@ -25,6 +25,6 @@ public class scroll_Control : MonoBehaviour
 
     public float GetValue()
     {
-        return scrollbar.value;
+        return 2 * scrollbar.value - 1;
     }
 }
