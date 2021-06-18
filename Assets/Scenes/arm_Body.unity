@@ -1666,6 +1666,7 @@ MonoBehaviour:
   dalpha_Body: 0
   dbeta_Body: 0
   dgamma_Body: 0
+  ddr_Alpha_Hand: 0
   r_F_X: 0
   r_F_Y: 0
   r_F_Z: 0
@@ -1683,9 +1684,9 @@ MonoBehaviour:
   l_Tau_Gamma_Shoulder: 0
   beta_Speed_Zero: 1
   gamma_Speed_Zero: 1
-  is_Playing: 0
+  is_Playing: 1
   isHFD: 0
-  velocity_Zero: 0
+  velocity_Zero: 5
   graph_Controler: {fileID: 1760688354}
   slider: {fileID: 9357753}
   scroll: {fileID: 374000712}
